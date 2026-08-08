@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f2747" />
+    <title>말따먹기</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header>
+        <div><p class="eyebrow">토목기사 실기</p><h1>말따먹기</h1></div>
+        <button class="text-button" id="resetButton" type="button">초기화</button>
+      </header>
+
+      <section id="homeView" class="view">
+        <div class="intro card"><p>문제를 고르고, 직접 적고, 바로 복습하세요.</p><div id="dataStatus" class="muted">14-1 ~ 26-2 말따먹기 기출문제</div></div>
+        <div class="mode-grid">
+          <button class="mode-card" data-mode="random" type="button"><strong>랜덤 12문제</strong><span>전체에서 무작위 출제</span></button>
+          <button class="mode-card" data-mode="frequent" type="button"><strong>빈출 문제</strong><span>2회 이상 출제된 문제</span></button>
+          <button class="mode-card" data-mode="wrong" type="button"><strong>오답 복습</strong><span>아직 남아 있는 오답</span></button>
+          <button class="mode-card" data-mode="round" type="button"><strong>회차별 풀이</strong><span>정답은 마지막에 공개</span></button>
+        </div>
+        <section id="roundPicker" class="card hidden"><label for="roundSelect">회차 선택</label><select id="roundSelect"></select><button id="startRoundButton" class="primary" type="button">선택 회차 시작</button></section>
+        <section class="stats card"><div><span>오답</span><strong id="wrongCount">0</strong></div><div><span>누적 풀이</span><strong id="solvedCount">0문제</strong></div></section>
+      </section>
+
+      <section id="quizView" class="view hidden">
+        <div class="quiz-top"><button id="backButton" class="text-button" type="button">‹ 나가기</button><span id="modeLabel"></span></div>
+        <div class="progress-row"><span id="roundLabel"></span><strong id="progressLabel"></strong></div>
+        <div class="meter"><i id="meterFill"></i></div>
+        <article class="question-card"><h2>문제</h2><p id="questionText"></p></article>
+        <label class="answer-label" for="answerInput">답 입력</label><textarea id="answerInput" rows="6" placeholder="줄바꿈이나 쉼표로 항목을 나누어 입력하세요."></textarea>
+        <div class="actions"><button id="submitButton" class="primary" type="button">제출</button><button id="nextButton" class="secondary hidden" type="button">다음 문제</button></div>
+        <div id="resultBox" class="result hidden"></div>
+        <div id="afterAnswerActions" class="after-actions hidden"><button id="correctButton" type="button">정답으로 처리</button><button id="memorizedButton" type="button">확실히 암기</button></div>
+      </section>
+
+      <section id="summaryView" class="view hidden"><div class="summary card"><p class="eyebrow" id="summaryMode"></p><h2 id="summaryTitle">풀이 완료</h2><strong id="summaryScore"></strong><p id="summaryText"></p><button id="summaryHomeButton" class="primary" type="button">처음으로</button></div><section id="roundResults" class="hidden"></section></section>
+    </main>
+    <script src="data/questions.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
