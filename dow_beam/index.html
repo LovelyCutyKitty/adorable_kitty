@@ -48,6 +48,7 @@
       <label>카톡 발주 메시지<textarea id="messageInput" rows="9" placeholder="카톡 메시지 한 건을 그대로 붙여넣으세요."></textarea></label>
       <button id="parseButton" class="secondary full" type="button">내용 읽어오기</button>
       <div id="parseNotice" class="notice hidden"></div>
+      <div id="parsedHeader" class="parsed-header hidden"><span>제품명</span><span>규격</span><span>수량</span></div>
       <div id="parsedLines" class="parsed-lines"></div>
       <div class="two-col"><label>발주처<input id="companyInput" required placeholder="예: 알케미스트" /></label><label>발주일<input id="orderDateInput" type="date" required /></label></div>
       <label>납기 / 발송 요청일<input id="dueDateInput" type="date" /><span class="help">달력에서 직접 선택하세요.</span></label>
@@ -68,6 +69,6 @@
     <dialog id="detailDialog" class="dialog"><div id="detailContent"></div></dialog>
     <dialog id="menuDialog" class="dialog menu-dialog"><div class="dialog-head"><h2>관리 메뉴</h2><button class="close-button" id="menuClose" aria-label="닫기" type="button">×</button></div><button id="exportButton" class="menu-item" type="button">데이터 백업하기</button><label class="menu-item file-label">데이터 복원하기<input id="importInput" type="file" accept="application/json" /></label><button id="resetButton" class="menu-item danger" type="button">모든 데이터 초기화</button><p class="help">휴대폰을 바꾸기 전에는 반드시 백업하세요.</p></dialog>
     <div id="toast" class="toast hidden"></div>
-    <script src="app.js?v=2"></script>
+    <script src="app.js?v=3"></script>
   </body>
 </html>
