@@ -13,13 +13,7 @@ function statusName(s){return ({received:'접수',checking:'재고 확인',produ
 function statusClass(s){return ({checking:'orange',producing:'blue',shipped:'ok'})[s]||'';}
 function unit(n){return Number(n||0).toLocaleString('ko-KR',{maximumFractionDigits:2});}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.remove('hidden');setTimeout(()=>e.classList.add('hidden'),2200);}
-function isoFromKorean(text){
-  const now=new Date(), year=now.getFullYear(); const absolute=text.match(/(\d{1,2})[./](\d{1,2})/);
-  if(absolute)return `${year}-${String(absolute[1]).padStart(2,'0')}-${String(absolute[2]).padStart(2,'0')}`;
-  if(/내일|낼/.test(text)){now.setDate(now.getDate()+1);return now.toISOString().slice(0,10)}
-  const m=text.match(/다음주\s*(월|화|수|목|금|토|일)/); if(m){const wanted='월화수목금토일'.indexOf(m[1]);const day=(now.getDay()+6)%7;now.setDate(now.getDate()+7+(wanted-day));return now.toISOString().slice(0,10)}
-  return '';
-}
+function isoFromKorean(){return '';}
 function normalizeSpec(s){return s.trim().replace(/\*/g,' × ').replace(/\s*×\s*/g,' × ').replace(/\s+/g,' ').replace(/(\d)\s*([tTwWlLrR])/g,'$1$2').replace(/\(\s*/g,'(').replace(/\s*\)/g,')');}
 function productKey(name,spec){return `${name}|${spec}`.toLowerCase().replace(/\s/g,'');}
 function findProduct(name,spec){const k=productKey(name,spec);return data.products.find(p=>productKey(p.name,p.spec)===k);}
@@ -33,17 +27,17 @@ function parseMessage(raw){
     if(/^추가\s*발주요/.test(clean)){company=(lines[i-1]||'').trim().split(/\s+/)[0]||company;continue;}
     const orderMatch=clean.match(/^(.+?)\s*(?:추가\s*)?발주요/);
     if(orderMatch){ company=orderMatch[1].replace(/\(.+?\)/g,'').trim(); const paren=clean.match(/\(([^)]+)\)/); if(paren) currentName=paren[1].trim(); continue; }
-    if(/^S[12]\s*[-–]/i.test(clean) && !/[=\-]\s*\d+\s*(개|kg|세트|장)/i.test(clean)){currentName=clean;continue;}
+    if(/^S[12]\s*[-–]/i.test(clean) && !/\d+(?:\.\d+)?\s*(개|kg|세트|장)/i.test(clean)){currentName=clean;continue;}
     if(/재고\s*봐|발송|배송|주문함|잔량|짤라|가공/.test(clean) && !/\d+\s*(개|kg|세트|장)/i.test(clean)){notes.push(clean);continue;}
-    const qty=clean.match(/(?:=|:|\-|→)?\s*(\d+(?:\.\d+)?)\s*(개|kg|세트|장)\b/i);
+    const qty=clean.match(/(?:=|:|\-|→)?\s*(\d+(?:\.\d+)?)\s*(개|kg|세트|장)/i);
     if(!qty) continue;
     let before=clean.slice(0,qty.index).replace(/[=:\-–]\s*$/,'').replace(/^\*+|\*+$/g,'').trim();
     let name=currentName||'';
-    const named=before.match(/^(S[12][^\d]*?(?:빔)?|FLAT|조각빔|튜브\s*본드|본드|알루미늄지그|카본)\s*(.*)$/i);
+    const named=before.match(/^(S[12]\s*-[^\d]*?빔|FLAT|조각빔|튜브\s*본드|본드|알루미늄지그|카본)\s*(.*)$/i);
     if(named){name=named[1].trim();before=named[2].trim();}
     if(!name){name='미분류 제품';}
     if(!before && name==='미분류 제품'){notes.push(clean);continue;}
-    result.push({name, spec:normalizeSpec(before||name), quantity:Number(qty[1]), unit:qty[2], caution:/\*|주문함|재고/.test(line), raw:clean});
+    result.push({name, spec:normalizeSpec(before||name), quantity:Number(qty[1]), unit:qty[2], caution:/^\*|\*\s*$|주문함|재고/.test(line), raw:clean});
   }
   return {company,lines:result,notes,due:isoFromKorean(raw)};
 }
