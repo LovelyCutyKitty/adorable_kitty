@@ -43,4 +43,4 @@ const r16=render;render=()=>{r16();let short=orderGaps().filter(x=>x.short>0).le
 const fieldScript=document.createElement('script');fieldScript.async=false;fieldScript.src='enhance-v14.js?rev=2';document.body.append(fieldScript);
 const openingScript=document.createElement('script');openingScript.async=false;openingScript.src='enhance-v15.js?rev=2';document.body.append(openingScript);
 
-const editScript=document.createElement('script');editScript.async=false;editScript.src='enhance-v16.js?rev=1';document.body.append(editScript);
+const editScript=document.createElement('script');editScript.async=false;editScript.src='enhance-v16.js?rev=2';document.body.append(editScript);
