@@ -42,3 +42,5 @@ function quickFiltersV3(){[['dashboardSearch','dashboardGroups'],['orderSearch',
 const r16=render;render=()=>{r16();let short=orderGaps().filter(x=>x.short>0).length,el=$('[data-summary="short"]');if(el){el.parentElement.classList.toggle('alert',!!short);el.innerHTML=`<span>발주 잔량 부족</span><strong>${short}건</strong>`}quickFiltersV3()};render();
 const fieldScript=document.createElement('script');fieldScript.src='enhance-v14.js?rev=2';document.body.append(fieldScript);
 const openingScript=document.createElement('script');openingScript.src='enhance-v15.js?rev=2';document.body.append(openingScript);
+
+const editScript=document.createElement('script');editScript.src='enhance-v16.js?rev=1';document.body.append(editScript);
