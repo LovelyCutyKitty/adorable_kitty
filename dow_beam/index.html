@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#123c39" />
+    <title>Dow innovation 제품 재고관리</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div><p class="eyebrow">DOW INNOVATION</p><h1>제품 재고관리</h1></div>
+        <button id="menuButton" class="icon-button" aria-label="메뉴" type="button">⋮</button>
+      </header>
+
+      <nav class="tabs" aria-label="화면 이동">
+        <button class="tab active" data-view="dashboard" type="button">현황</button>
+        <button class="tab" data-view="orders" type="button">발주</button>
+        <button class="tab" data-view="inventory" type="button">재고</button>
+      </nav>
+
+      <section id="dashboardView" class="view">
+        <div class="date-card"><div><span id="todayLabel"></span><strong>오늘 할 일</strong></div><button id="quickOrderButton" class="primary small" type="button">+ 발주 등록</button></div>
+        <section id="summaryCards" class="summary-grid"></section>
+        <section class="section-head"><div><h2>우선 처리</h2><p>납기와 재고 기준으로 정렬됩니다.</p></div></section>
+        <div id="priorityList" class="item-list"></div>
+        <section class="section-head"><div><h2>재고 부족 품목</h2><p>출고예정 수량을 반영한 결과입니다.</p></div><button class="link-button" data-go="inventory" type="button">전체 보기</button></section>
+        <div id="shortageList" class="item-list"></div>
+      </section>
+
+      <section id="ordersView" class="view hidden">
+        <div class="page-title"><div><h2>발주 관리</h2><p>카톡 메시지 한 건을 붙여넣어 등록합니다.</p></div><button id="newOrderButton" class="primary small" type="button">+ 새 발주</button></div>
+        <div class="filter-row"><select id="orderStatusFilter"><option value="all">전체 상태</option><option value="received">접수</option><option value="checking">재고 확인</option><option value="producing">생산중</option><option value="ready">생산완료</option><option value="shipped">출고완료</option></select></div>
+        <div id="orderList" class="item-list"></div>
+      </section>
+
+      <section id="inventoryView" class="view hidden">
+        <div class="page-title"><div><h2>제품 재고</h2><p>제품을 처음부터 하나씩 등록할 수 있습니다.</p></div><button id="newProductButton" class="primary small" type="button">+ 제품 추가</button></div>
+        <input id="productSearch" class="search" type="search" placeholder="제품명 또는 규격 검색" />
+        <div id="productList" class="item-list"></div>
+      </section>
+    </main>
+
+    <dialog id="orderDialog" class="dialog wide"><form id="orderForm" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow">발주 등록</p><h2>카톡 메시지 붙여넣기</h2></div><button class="close-button" value="cancel" aria-label="닫기">×</button></div>
+      <label>카톡 발주 메시지<textarea id="messageInput" rows="9" placeholder="카톡 메시지 한 건을 그대로 붙여넣으세요."></textarea></label>
+      <button id="parseButton" class="secondary full" type="button">내용 읽어오기</button>
+      <div id="parseNotice" class="notice hidden"></div>
+      <div id="parsedLines" class="parsed-lines"></div>
+      <div class="two-col"><label>발주처<input id="companyInput" required placeholder="예: 알케미스트" /></label><label>발주일<input id="orderDateInput" type="date" required /></label></div>
+      <label>납기 / 발송 요청일<input id="dueDateInput" type="date" /><span class="help">메시지에 날짜 표현이 있으면 자동으로 제안됩니다. 반드시 확인하세요.</span></label>
+      <label>공통 메모<input id="orderMemoInput" placeholder="예: 다음주 월요일 발송 요청" /></label>
+      <div class="dialog-actions"><button value="cancel" class="secondary" type="button">취소</button><button id="saveOrderButton" class="primary" type="submit">발주 저장</button></div>
+    </form></dialog>
+
+    <dialog id="productDialog" class="dialog"><form id="productForm" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow">제품 등록</p><h2 id="productDialogTitle">새 제품 추가</h2></div><button class="close-button" value="cancel" aria-label="닫기">×</button></div>
+      <input id="productIdInput" type="hidden" />
+      <label>품목군 / 제품명<input id="productNameInput" required placeholder="예: S2-프레스빔" /></label>
+      <label>규격<input id="specInput" required placeholder="예: 120W × 500L × 226R" /></label>
+      <div class="two-col"><label>현재 재고<input id="stockInput" type="number" min="0" step="0.01" required value="0" /></label><label>단위<select id="unitInput"><option>개</option><option>kg</option><option>세트</option><option>장</option></select></label></div>
+      <label>안전재고 <input id="safetyStockInput" type="number" min="0" step="0.01" value="0" /><span class="help">나중에 입력해도 됩니다.</span></label>
+      <div class="dialog-actions"><button value="cancel" class="secondary" type="button">취소</button><button class="primary" type="submit">저장</button></div>
+    </form></dialog>
+
+    <dialog id="detailDialog" class="dialog"><div id="detailContent"></div></dialog>
+    <dialog id="menuDialog" class="dialog menu-dialog"><div class="dialog-head"><h2>관리 메뉴</h2><button class="close-button" id="menuClose" aria-label="닫기" type="button">×</button></div><button id="exportButton" class="menu-item" type="button">데이터 백업하기</button><label class="menu-item file-label">데이터 복원하기<input id="importInput" type="file" accept="application/json" /></label><button id="resetButton" class="menu-item danger" type="button">모든 데이터 초기화</button><p class="help">휴대폰을 바꾸기 전에는 반드시 백업하세요.</p></dialog>
+    <div id="toast" class="toast hidden"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
