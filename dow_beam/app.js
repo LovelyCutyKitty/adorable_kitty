@@ -21,17 +21,21 @@ function open(dialog){$(dialog).showModal();}
 function close(dialog){$(dialog).close();}
 
 function parseMessage(raw){
-  const lines=raw.split(/\n+/).map(x=>x.trim()).filter(Boolean);let company='';let currentName='';let notes=[];let result=[];
+  const lines=raw.split(/\n+/).map(x=>x.trim()).filter(Boolean);let company='';let currentName='';let currentSpec='';let notes=[];let result=[];
   for(let i=0;i<lines.length;i++){
     let line=lines[i]; const clean=line.replace(/^\*+|\*+$/g,'').trim();
     if(/^추가\s*발주요/.test(clean)){company=(lines[i-1]||'').trim().split(/\s+/)[0]||company;continue;}
     const orderMatch=clean.match(/^(.+?)\s*(?:추가\s*)?발주요/);
-    if(orderMatch){ company=orderMatch[1].replace(/\(.+?\)/g,'').trim(); const paren=clean.match(/\(([^)]+)\)/); if(paren) currentName=paren[1].trim(); continue; }
-    if(/^S[12]\s*[-–]/i.test(clean) && !/\d+(?:\.\d+)?\s*(개|kg|세트|장)/i.test(clean)){currentName=clean;continue;}
+    if(orderMatch){ company=orderMatch[1].replace(/\(.+?\)/g,'').trim(); const paren=clean.match(/\(([^)]+)\)/); if(paren) currentName=paren[1].trim().replace(/\s+/g,''); currentSpec=''; continue; }
+    if(/^S[12]\s*[-–]/i.test(clean) && !/\d+(?:\.\d+)?\s*(개|kg|세트|장)/i.test(clean)){currentName=clean;currentSpec='';continue;}
+    const flatOnly=clean.match(/^FLAT\s*[-–]\s*(.+)$/i);
+    if(flatOnly && !/\d+(?:\.\d+)?\s*(개|kg|세트|장)/i.test(clean)){currentName='FLAT';currentSpec=flatOnly[1].trim();continue;}
+    if(/->|→|길이\s*\d+\s*\/\s*\d+/.test(clean)){notes.push(clean);continue;}
     if(/재고\s*봐|발송|배송|주문함|잔량|짤라|가공/.test(clean) && !/\d+\s*(개|kg|세트|장)/i.test(clean)){notes.push(clean);continue;}
     const qty=clean.match(/(?:=|:|\-|→)?\s*(\d+(?:\.\d+)?)\s*(개|kg|세트|장)/i);
     if(!qty) continue;
     let before=clean.slice(0,qty.index).replace(/[=:\-–]\s*$/,'').replace(/^\*+|\*+$/g,'').trim();
+    if(/^(제작\s*)?수량$/.test(before) && currentSpec) before=currentSpec;
     let name=currentName||'';
     const named=before.match(/^(S[12]\s*-[^\d]*?빔|FLAT|조각빔|튜브\s*본드|본드|알루미늄지그|카본)\s*(.*)$/i);
     if(named){name=named[1].trim();before=named[2].trim();}
@@ -62,7 +66,7 @@ function renderOrders(){const filter=$('#orderStatusFilter').value;const all=fil
 function renderProducts(){const q=$('#productSearch').value.trim().toLowerCase();const all=data.products.filter(p=>`${p.name} ${p.spec}`.toLowerCase().includes(q));$('#productList').innerHTML=all.length?all.map(productCard).join(''):'<div class="empty">등록된 제품이 없습니다.<br>제품 추가를 눌러 현재 재고부터 입력하세요.</div>';}
 
 function showOrderDialog(){parsed=[];$('#orderForm').reset();$('#orderDateInput').value=today();$('#parseNotice').classList.add('hidden');$('#parsedLines').innerHTML='';open('#orderDialog');}
-function drawParsed(){const box=$('#parsedLines');box.innerHTML=parsed.map((p,i)=>`<div class="parsed-line"><div class="line-fields"><input data-field="name" data-index="${i}" value="${esc(p.name)}" aria-label="품목명" /><input data-field="spec" data-index="${i}" value="${esc(p.spec)}" aria-label="규격" /><input data-field="quantity" data-index="${i}" type="number" min="0" step="0.01" value="${p.quantity}" aria-label="수량" /></div><small>${p.unit} · ${p.caution?'확인이 필요한 항목입니다.':'자동 인식됨'}</small></div><button class="delete-line" data-remove-parsed="${i}" type="button">×</button></div>`).join('');}
+function drawParsed(){const box=$('#parsedLines');$('#parsedHeader').classList.toggle('hidden',!parsed.length);box.innerHTML=parsed.map((p,i)=>`<div class="parsed-line"><div class="line-fields"><input data-field="name" data-index="${i}" value="${esc(p.name)}" aria-label="제품명" /><input data-field="spec" data-index="${i}" value="${esc(p.spec)}" aria-label="규격" /><input data-field="quantity" data-index="${i}" type="number" min="0" step="0.01" value="${p.quantity}" aria-label="수량" /></div><small>단위: ${p.unit}${p.caution?' · 확인 필요':''}</small></div><button class="delete-line" data-remove-parsed="${i}" type="button">×</button></div>`).join('');}
 function parseNow(){const got=parseMessage($('#messageInput').value);parsed=got.lines;$('#companyInput').value=got.company;$('#dueDateInput').value=got.due;$('#orderMemoInput').value=got.notes.join(' / ');const notice=$('#parseNotice');notice.textContent=parsed.length?`${parsed.length}개 품목을 읽었습니다.${got.notes.length?' 메모도 함께 저장됩니다.':''} 제품·규격은 저장 전 꼭 확인하세요.`:'수량이 있는 품목을 읽지 못했습니다. 메시지를 확인해주세요.';notice.classList.remove('hidden');drawParsed();}
 function saveOrder(e){e.preventDefault();$$('#parsedLines input').forEach(input=>{const p=parsed[Number(input.dataset.index)];p[input.dataset.field]=input.dataset.field==='quantity'?Number(input.value):input.value.trim();});if(!parsed.length){toast('먼저 카톡 내용을 읽어오세요.');return;}const company=$('#companyInput').value.trim();if(!company){toast('발주처를 입력하세요.');return;}const lines=parsed.map(l=>{let p=findProduct(l.name,l.spec);if(!p){p={id:id(),name:l.name,spec:l.spec,stock:0,unit:l.unit,safety:0};data.products.push(p);}return {...l,productId:p.id};});data.orders.push({id:id(),company,orderDate:$('#orderDateInput').value,dueDate:$('#dueDateInput').value,memo:$('#orderMemoInput').value.trim(),status:'received',lines,createdAt:Date.now()});close('#orderDialog');save();toast('발주를 저장했습니다.');}
 function showProductDialog(product){$('#productForm').reset();$('#productDialogTitle').textContent=product?'제품 수정':'새 제품 추가';$('#productIdInput').value=product?.id||'';$('#productNameInput').value=product?.name||'';$('#specInput').value=product?.spec||'';$('#stockInput').value=product?.stock??0;$('#unitInput').value=product?.unit||'개';$('#safetyStockInput').value=product?.safety??0;open('#productDialog');}
