@@ -153,3 +153,6 @@ document.addEventListener('click',e=>{
 /* 생산 계획 화면에서도 해당 제품을 바로 수정 */
 const oldPlanOrderHtml16=planOrderHtml;
 planOrderHtml=()=>oldPlanOrderHtml16().replace(/<button data-line="([^"]+)">생산 · 출고 입력<\/button>/g,'<div class="line-actions"><button data-line="$1">생산 · 출고 입력</button><button type="button" data-line-edit="$1">제품·수량 수정</button></div>');
+
+/* 기존에 떠 있는 발주 카드에도 수정 버튼을 즉시 표시 */
+render();
