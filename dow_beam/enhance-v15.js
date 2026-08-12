@@ -1,6 +1,6 @@
 /* 등록된 제품 선택형 초기재고 입력 */
 document.body.insertAdjacentHTML('beforeend',`<dialog id="openingDialog" class="dialog"><form id="openingForm"><div class="dialog-head"><h2>초기재고 입력</h2><button class="close" type="button" data-close>×</button></div><label>제품 선택<select id="openingProduct"></select></label><div id="openingProductInfo" class="info"></div><label>초기재고 수량<input id="openingValue" type="number" min="0" step="0.01" required></label><p class="warn-note">이미 생산·출고 기록이 있는 제품은 실제 재고를 맞추려면 ‘재고 수정’을 사용하세요.</p><div class="actions"><button class="secondary" type="button" data-close>취소</button><button class="primary" type="submit">초기재고 저장</button></div></form></dialog>`);
-const openButton=$('#newProduct');if(openButton)openButton.textContent='+ 초기재고 입력';
+const openButton=$('#newProduct');if(openButton)openButton.innerHTML='초기재고<br>입력';openButton.classList.add('compact-action');
 function openingOptions(){let s=$('#openingProduct');s.innerHTML=data.products.length?data.products.map(p=>`<option value="${p.id}">${esc(p.name)} · ${esc(p.spec)} (${unit(p)})</option>`).join(''):'<option value="">등록된 제품이 없습니다.</option>';showOpeningInfo()}
 function showOpeningInfo(){let p=data.products.find(x=>x.id===$('#openingProduct').value);if(!p){$('#openingProductInfo').textContent='제품 탭에서 제품을 먼저 등록하세요.';$('#openingValue').value='';return}$('#openingProductInfo').textContent=`${p.name} · ${p.spec} · 현재 초기재고 ${q(p.opening)}${unit(p)} · 현재 총재고 ${q(stock(p))}${unit(p)}`;$('#openingValue').value=n(p.opening)}
 $('#openingProduct').onchange=showOpeningInfo;
