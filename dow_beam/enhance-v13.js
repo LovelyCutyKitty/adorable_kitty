@@ -73,3 +73,8 @@ const orderLineDueScript=document.createElement('script');
 orderLineDueScript.async=false;
 orderLineDueScript.src='enhance-v23.js?rev=1';
 document.body.append(orderLineDueScript);
+
+const savedLineDueScript=document.createElement('script');
+savedLineDueScript.async=false;
+savedLineDueScript.src='enhance-v24.js?rev=1';
+document.body.append(savedLineDueScript);
