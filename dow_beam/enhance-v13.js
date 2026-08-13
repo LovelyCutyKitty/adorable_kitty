@@ -58,3 +58,8 @@ const perLineDueScript=document.createElement('script');
 perLineDueScript.async=false;
 perLineDueScript.src='enhance-v20.js?rev=1';
 document.body.append(perLineDueScript);
+
+const dueCleanupScript=document.createElement('script');
+dueCleanupScript.async=false;
+dueCleanupScript.src='enhance-v21.js?rev=1';
+document.body.append(dueCleanupScript);
