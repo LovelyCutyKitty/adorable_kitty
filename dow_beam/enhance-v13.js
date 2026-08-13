@@ -63,3 +63,8 @@ const dueCleanupScript=document.createElement('script');
 dueCleanupScript.async=false;
 dueCleanupScript.src='enhance-v21.js?rev=1';
 document.body.append(dueCleanupScript);
+
+const catalogDirectEditScript=document.createElement('script');
+catalogDirectEditScript.async=false;
+catalogDirectEditScript.src='enhance-v22.js?rev=1';
+document.body.append(catalogDirectEditScript);
