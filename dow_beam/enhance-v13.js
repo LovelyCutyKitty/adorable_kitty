@@ -68,3 +68,8 @@ const catalogDirectEditScript=document.createElement('script');
 catalogDirectEditScript.async=false;
 catalogDirectEditScript.src='enhance-v22.js?rev=1';
 document.body.append(catalogDirectEditScript);
+
+const orderLineDueScript=document.createElement('script');
+orderLineDueScript.async=false;
+orderLineDueScript.src='enhance-v23.js?rev=1';
+document.body.append(orderLineDueScript);
