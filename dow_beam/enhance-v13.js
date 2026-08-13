@@ -53,3 +53,8 @@ const finalFixScript=document.createElement('script');
 finalFixScript.async=false;
 finalFixScript.src='enhance-v19.js?rev=1';
 document.body.append(finalFixScript);
+
+const perLineDueScript=document.createElement('script');
+perLineDueScript.async=false;
+perLineDueScript.src='enhance-v20.js?rev=1';
+document.body.append(perLineDueScript);
