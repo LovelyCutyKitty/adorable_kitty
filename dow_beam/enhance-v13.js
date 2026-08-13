@@ -44,3 +44,5 @@ const fieldScript=document.createElement('script');fieldScript.async=false;field
 const openingScript=document.createElement('script');openingScript.async=false;openingScript.src='enhance-v15.js?rev=2';document.body.append(openingScript);
 
 const editScript=document.createElement('script');editScript.async=false;editScript.src='enhance-v16.js?rev=2';document.body.append(editScript);
+
+const groupingScript=document.createElement('script');groupingScript.async=false;groupingScript.src='enhance-v17.js?rev=1';document.body.append(groupingScript);
