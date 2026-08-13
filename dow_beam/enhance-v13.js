@@ -78,3 +78,8 @@ const savedLineDueScript=document.createElement('script');
 savedLineDueScript.async=false;
 savedLineDueScript.src='enhance-v24.js?rev=1';
 document.body.append(savedLineDueScript);
+
+const classificationUiScript=document.createElement('script');
+classificationUiScript.async=false;
+classificationUiScript.src='enhance-v25.js?rev=1';
+document.body.append(classificationUiScript);
