@@ -46,3 +46,5 @@ const openingScript=document.createElement('script');openingScript.async=false;o
 const editScript=document.createElement('script');editScript.async=false;editScript.src='enhance-v16.js?rev=2';document.body.append(editScript);
 
 const groupingScript=document.createElement('script');groupingScript.async=false;groupingScript.src='enhance-v17.js?rev=1';document.body.append(groupingScript);
+
+const taxonomyScript=document.createElement('script');taxonomyScript.async=false;taxonomyScript.src='enhance-v18.js?rev=1';document.body.append(taxonomyScript);
