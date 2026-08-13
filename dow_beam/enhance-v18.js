@@ -93,6 +93,15 @@ function catalogHtml18(){
 const master18=master;
 master=()=>catalogHtml18()+master18();
 
+/* 재고 탭도 제품코드 → 제품종류 → 제품규격 순서로 펼쳐 본다. */
+const stockList18=stockList;
+stockList=()=>{
+  if(!data.products.length)return '<div class="empty">등록된 제품이 없습니다.</div>';
+  const codes={};
+  data.products.forEach(p=>{const code=code18(p),kind=inferKind18(p,code);((codes[code]??={})[kind]??=[]).push(p)});
+  return Object.entries(codes).map(([code,kinds])=>`<details class="stock-group"><summary>${esc(group18(code))} <span class="order-meta">${Object.values(kinds).flat().length}개 제품</span></summary>${Object.entries(kinds).map(([kind,ps])=>`<details class="period"><summary>${esc(kind)} <span class="order-meta">${ps.length}개 규격</span></summary>${ps.map(p=>{const h=(data.history||[]).filter(x=>x.productId===p.id).slice(0,5);return `<details class="line-card"><summary><strong>${esc(p.spec)}</strong><span class="stock-now ${stock(p)<=0?'urgent':''}">현재 총재고 ${q(stock(p))}${unit(p)}</span></summary><p class="muted">${esc(p.name)} · 코드 ${esc(p.code||'미입력')}</p><div class="numbers stock-detail"><div>초기재고<strong>${q(p.opening)}${unit(p)}</strong></div><div>누적 생산완료<strong>${q(p.produced)}${unit(p)}</strong></div><div>누적 출고<strong>${q(p.shipped)}${unit(p)}</strong></div><div>재고 조정<strong>${q(p.adjustment)}${unit(p)}</strong></div></div>${h.length?`<p class="muted">최근 입력<br>${h.map(x=>`${esc(x.at)} ${esc(x.text)}`).join('<br>')}</p>`:''}<button class="small-action" data-adjust="${p.id}">재고 수정</button></details>`}).join('')}</details>`).join('')}</details>`).join('');
+};
+
 /* 제품 정보 수정 화면과 분류도 연결 */
 const productSubmit18=$('#productForm').onsubmit;
 $('#productForm').onsubmit=e=>{
