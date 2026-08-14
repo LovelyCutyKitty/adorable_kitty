@@ -11,5 +11,4 @@ function classificationNeeded25(){
   return `<section class="classification-needed"><div class="classification-title"><h3>분류 필요 제품</h3><span class="classification-count">${products.length}개</span></div><p class="classification-help">제품 하나를 눌러 제품코드·종류·규격을 정리하세요.</p><details class="stock-group" open><summary>제품 목록 보기 <span class="order-meta">${products.length}개</span></summary><div class="classification-list">${products.map(p=>`<button type="button" class="classification-card" data-edit-product="${p.id}"><strong>${esc(p.name)} · ${esc(p.spec)}</strong><span class="classification-meta">${esc(p.code||'코드 미입력')} · ${esc(p.kind||'종류 미확정')} · ${unit(p)}</span><span class="classification-action">제품 정보 수정</span></button>`).join('')}</div></details></section>`;
 }
 master=()=>catalogHtml22()+classificationNeeded25();
-const v26=document.createElement('script');v26.src='enhance-v26.js?rev=1';v26.async=false;document.body.append(v26);
 render();
