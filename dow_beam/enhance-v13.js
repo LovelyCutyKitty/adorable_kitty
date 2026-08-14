@@ -81,5 +81,5 @@ document.body.append(savedLineDueScript);
 
 const classificationUiScript=document.createElement('script');
 classificationUiScript.async=false;
-classificationUiScript.src='enhance-v25.js?rev=1';
+classificationUiScript.src='enhance-v25.js?rev=2';
 document.body.append(classificationUiScript);
