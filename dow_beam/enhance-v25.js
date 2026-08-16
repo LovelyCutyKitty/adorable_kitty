@@ -21,4 +21,4 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-product-or
 render();
 
 /* 현재 배포본에서도 발주 정정 기능을 불러온다. */
-if(!document.querySelector('script[data-order-correction]')){const s=document.createElement('script');s.dataset.orderCorrection='1';s.async=false;s.src='enhance-v27.js?rev=3';document.body.append(s);}
+if(!document.querySelector('script[data-order-correction]')){const s=document.createElement('script');s.dataset.orderCorrection='1';s.async=false;s.src='enhance-v27.js?rev=4';document.body.append(s);}
