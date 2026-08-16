@@ -7,7 +7,7 @@ function orderButtons27(o){
   return `<div class="order-actions27"><button type="button" class="small-action" data-order-edit="${o.id}">발주 정보 수정</button><button type="button" class="small-action danger27" data-order-delete="${o.id}">발주 삭제</button></div>`;
 }
 const orderHtml27=orderHtml;
-orderHtml=(o,dash=false)=>orderHtml27(o,dash).replace(/(<\\/summary>)/,`$1${orderButtons27(o)}`);
+orderHtml=(o,dash=false)=>orderHtml27(o,dash).replace(/<\/summary>/,`$1${orderButtons27(o)}`);
 
 const lineCard27=lineCard;
 lineCard=(o,l)=>lineCard27(o,l).replace('</article>',`<div class="order-actions27 line-edit27"><button type="button" class="small-action" data-line-edit="${o.id}|${l.id}">제품·수량 수정</button><button type="button" class="small-action danger27" data-line-delete="${o.id}|${l.id}">제품 삭제</button></div></article>`);
