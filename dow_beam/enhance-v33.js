@@ -63,3 +63,4 @@ const render33=render;render=()=>{render33();setTimeout(drawCalendar33,0)};setTi
 const master34Script=document.createElement('script');master34Script.async=false;master34Script.src='enhance-v34.js?rev=1';document.body.append(master34Script);
 const master34Runtime=document.createElement('script');master34Runtime.async=false;master34Runtime.src='enhance-v34-runtime.js?rev=1';document.body.append(master34Runtime);
 const match35=document.createElement('script');match35.async=false;match35.src='enhance-v35.js?rev=1';document.body.append(match35);
+const taxonomy36=document.createElement('script');taxonomy36.async=false;taxonomy36.src='enhance-v36.js?rev=1';document.body.append(taxonomy36);
