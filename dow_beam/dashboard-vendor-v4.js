@@ -48,8 +48,30 @@
     }).join('');
   }
 
+  function renderShort() {
+    const vendors = {};
+    (typeof orderGaps === 'function' ? orderGaps() : []).filter((row) => row.short > 0).forEach((row) => {
+      (vendors[row.o.company || '발주처 미입력'] ||= []).push(row);
+    });
+    return Object.entries(vendors).sort(([a], [b]) => a.localeCompare(b, 'ko')).map(([company, rows]) => {
+      const contents = rows.map((row) => `<article class="line-card">
+        <strong>${esc(row.l.name)}</strong>
+        ${row.l.spec ? `<span class="spec">${esc(row.l.spec)}</span>` : ''}
+        <p class="muted">발주 잔량 ${q(row.remain)}${esc(row.l.unit)} · 재고 배정 ${q(row.remain - row.short)}${esc(row.l.unit)} · <strong class="urgent">${q(row.short)}${esc(row.l.unit)} 부족</strong></p>
+        <button type="button" data-line="${row.o.id}|${row.l.id}">제품 수량 입력</button>
+      </article>`).join('');
+      return vendorDetails(company, contents, rows.length, '개 품목');
+    }).join('');
+  }
+
   openSummary = (type) => {
-    if (type === 'short') return previousOpenSummary(type);
+    if (type === 'short') {
+      const html = renderShort();
+      $('#summaryTitle').textContent = '발주 잔량 부족';
+      $('#summaryList').innerHTML = html || '<div class="empty">발주 잔량을 기준으로 재고가 부족한 품목이 없습니다.</div>';
+      show('#summaryDialog');
+      return;
+    }
     if (!labels[type]) return previousOpenSummary(type);
     const html = type === 'ready' ? renderReady() : renderOrders(type);
     $('#summaryTitle').textContent = labels[type];
