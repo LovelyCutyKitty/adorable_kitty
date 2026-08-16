@@ -32,3 +32,8 @@ const productionPlanScript=document.createElement('script');
 productionPlanScript.async=false;
 productionPlanScript.src='enhance-v29.js?rev=1';
 document.body.append(productionPlanScript);
+
+const flexibleChangeScript=document.createElement('script');
+flexibleChangeScript.async=false;
+flexibleChangeScript.src='enhance-v30.js?rev=1';
+document.body.append(flexibleChangeScript);
