@@ -64,3 +64,5 @@ const master34Script=document.createElement('script');master34Script.async=false
 const master34Runtime=document.createElement('script');master34Runtime.async=false;master34Runtime.src='enhance-v34-runtime.js?rev=1';document.body.append(master34Runtime);
 const match35=document.createElement('script');match35.async=false;match35.src='enhance-v35.js?rev=1';document.body.append(match35);
 const taxonomy36=document.createElement('script');taxonomy36.async=false;taxonomy36.src='enhance-v36.js?rev=1';document.body.append(taxonomy36);
+
+const taxonomy37=document.createElement('script');taxonomy37.async=false;taxonomy37.src='enhance-v37.js?rev=2';document.body.append(taxonomy37);
