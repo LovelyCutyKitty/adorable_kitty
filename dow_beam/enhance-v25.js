@@ -42,3 +42,8 @@ const dueCalendarScript=document.createElement('script');
 dueCalendarScript.async=false;
 dueCalendarScript.src='enhance-v31.js?rev=1';
 document.body.append(dueCalendarScript);
+
+const calendarFilterScript=document.createElement('script');
+calendarFilterScript.async=false;
+calendarFilterScript.src='enhance-v32.js?rev=1';
+document.body.append(calendarFilterScript);
