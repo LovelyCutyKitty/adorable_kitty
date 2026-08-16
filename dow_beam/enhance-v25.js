@@ -22,3 +22,8 @@ render();
 
 /* 현재 배포본에서도 발주 정정 기능을 불러온다. */
 if(!document.querySelector('script[data-order-correction]')){const s=document.createElement('script');s.dataset.orderCorrection='1';s.async=false;s.src='enhance-v27.js?rev=5';document.body.append(s);}
+
+const flexibleQuantityScript=document.createElement('script');
+flexibleQuantityScript.async=false;
+flexibleQuantityScript.src='enhance-v28.js?rev=1';
+document.body.append(flexibleQuantityScript);
