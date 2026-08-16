@@ -11,13 +11,17 @@
     return line.dueDate || order.dueDate || '';
   }
 
+  function lineDone(line) {
+    return n(line.shipped) >= n(line.quantity);
+  }
+
   function isMatch(type, order, line, product) {
     const remain = Math.max(0, n(line.quantity) - n(line.shipped));
     const due = lineDue(order, line);
     const days = due ? Math.ceil((new Date(due) - new Date()) / 864e5) : null;
-    if (type === 'active') return !done(line);
-    if (type === 'urgent') return !done(line) && days !== null && days <= 7;
-    if (type === 'ready') return !done(line) && product && stock(product) >= remain;
+    if (type === 'active') return !lineDone(line);
+    if (type === 'urgent') return !lineDone(line) && days !== null && days <= 7;
+    if (type === 'ready') return !lineDone(line) && product && stock(product) >= remain;
     if (type === 'short') return product && stock(product) < remain;
     return false;
   }
