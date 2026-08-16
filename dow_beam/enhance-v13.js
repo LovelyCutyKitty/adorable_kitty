@@ -81,10 +81,6 @@ document.body.append(savedLineDueScript);
 
 const classificationUiScript=document.createElement('script');
 classificationUiScript.async=false;
-classificationUiScript.src='enhance-v25.js?rev=5';
+classificationUiScript.src='enhance-v25.js?rev=6';
 document.body.append(classificationUiScript);
 
-const orderCorrectionScript=document.createElement('script');
-orderCorrectionScript.async=false;
-orderCorrectionScript.src='enhance-v27.js?rev=1';
-document.body.append(orderCorrectionScript);
