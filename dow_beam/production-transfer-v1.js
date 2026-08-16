@@ -5,12 +5,20 @@
     if (!form || typeof findOrCreateProduct16 !== 'function') return;
     const producedLabel = document.querySelector('#editLineProduced')?.closest('label');
     if (producedLabel) producedLabel.firstChild.textContent = '이번 생산완료 수량 (재고로 이관)';
-    const restoreDashboard = (ref) => requestAnimationFrame(() => {
-      const trigger = document.querySelector(`[data-line-edit="${ref}"],[data-line="${ref}"]`);
-      let parent = trigger;
-      while (parent) { if (parent.tagName === 'DETAILS') parent.open = true; parent = parent.parentElement; }
-      trigger?.closest('.line-card')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    });
+    const restoreCurrentView = (ref) => {
+      const active = document.querySelector('.tab.active')?.dataset.view;
+      const container = active === 'orders' ? document.querySelector('#orderGroups')
+        : active === 'dashboard' ? document.querySelector('#dashboardGroups')
+        : document.querySelector('#orderGroups');
+      const restore = () => {
+        const trigger = container?.querySelector(`[data-line-edit="${ref}"],[data-line="${ref}"]`);
+        let parent = trigger;
+        while (parent) { if (parent.tagName === 'DETAILS') parent.open = true; parent = parent.parentElement; }
+        trigger?.closest('.line-card')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      };
+      requestAnimationFrame(() => setTimeout(restore, 0));
+      setTimeout(restore, 180);
+    };
     form.onsubmit = (event) => {
       event.preventDefault();
       const order = data.orders.find(item => item.id === form.dataset.orderId);
@@ -52,7 +60,7 @@
       hide('#lineEditDialog');
       save();
       const stockNow = n(stock(target));
-      restoreDashboard(`${order.id}|${line.id}`);
+      restoreCurrentView(`${order.id}|${line.id}`);
       if (transferred) toast(`생산완료 ${q(next.produced)}${next.unit}를 공장 재고로 이관했습니다. 재고 ${q(previous.stock)} → ${q(stockNow)}${next.unit}`);
       else toast('제품 수량을 변경했습니다.');
     };
