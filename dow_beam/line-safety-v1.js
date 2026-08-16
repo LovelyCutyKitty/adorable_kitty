@@ -1,5 +1,24 @@
 /* Never show a negative order balance; keep change history oldest-to-newest. */
 (() => {
+  window.restoreOrderContext = (ref) => {
+    const active = document.querySelector('.tab.active')?.dataset.view;
+    const container = active === 'orders' ? document.querySelector('#orderGroups')
+      : active === 'dashboard' ? document.querySelector('#dashboardGroups')
+      : document.querySelector('#orderGroups');
+    const restore = () => {
+      const trigger = container?.querySelector(`[data-line-edit="${ref}"],[data-line="${ref}"]`);
+      let parent = trigger;
+      while (parent) {
+        if (parent.tagName === 'DETAILS') parent.open = true;
+        parent = parent.parentElement;
+      }
+      trigger?.closest('.line-card')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    };
+    requestAnimationFrame(() => setTimeout(restore, 0));
+    setTimeout(restore, 180);
+    setTimeout(restore, 500);
+  };
+
   function install() {
     if (typeof lineCard !== 'function') return;
     if (lineCard.__safeOrderBalance) return;
@@ -37,7 +56,10 @@
         const label = type === 'order' ? '발주수량' : type === 'plan' ? '생산예정' : type === 'produced' ? '생산완료' : '출고완료';
         const msg = `${label}: ${q(before)}${l.unit} → ${q(after)}${l.unit} (${actualDelta > 0 ? '+' : ''}${q(actualDelta)}${l.unit})${reason ? ` · ${reason}` : ''}`;
         (l.changeLog ??= []).push(msg);
-        hide('#changeDialog30'); save(); toast(msg);
+        const ref = `${o.id}|${l.id}`;
+        hide('#changeDialog30'); save();
+        window.restoreOrderContext(ref);
+        toast(msg);
       };
     }
     render();
