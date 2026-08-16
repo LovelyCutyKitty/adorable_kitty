@@ -1,0 +1,51 @@
+/* Production completion is transferred to factory stock, not kept on the order line. */
+(() => {
+  function install() {
+    const form = document.querySelector('#lineEditForm');
+    if (!form || typeof findOrCreateProduct16 !== 'function') return;
+    const producedLabel = document.querySelector('#editLineProduced')?.closest('label');
+    if (producedLabel) producedLabel.firstChild.textContent = '이번 생산완료 수량 (재고로 이관)';
+    form.onsubmit = (event) => {
+      event.preventDefault();
+      const order = data.orders.find(item => item.id === form.dataset.orderId);
+      const line = order?.lines.find(item => item.id === form.dataset.lineId);
+      if (!order || !line) return;
+      const next = {
+        name: $('#editLineName').value.trim(), spec: $('#editLineSpec').value.trim(), unit: $('#editLineUnit').value.trim(),
+        quantity: n($('#editLineQuantity').value), planned: n($('#editLinePlanned').value),
+        produced: n($('#editLineProduced').value), shipped: n($('#editLineShipped').value),
+      };
+      if (!next.name || !next.spec || !next.unit) return toast('제품명, 규격 및 단위를 입력하세요.');
+      if (next.shipped > next.quantity) return toast('출고완료 수량은 발주수량보다 클 수 없습니다.');
+      const source = data.products.find(item => item.id === line.productId) || findOrCreateProduct16(line.name, line.spec, line.unit);
+      const same = source.name === next.name && source.spec === next.spec;
+      const target = same ? source : findOrCreateProduct16(next.name, next.spec, next.unit);
+      const previous = { quantity: n(line.quantity), planned: n(line.planned), produced: n(line.orderProduced), shipped: n(line.shipped), stock: n(stock(target)) };
+      if (!same) {
+        source.produced = n(source.produced) - previous.produced;
+        source.shipped = n(source.shipped) - previous.shipped;
+        target.produced = n(target.produced) + previous.produced;
+        target.shipped = n(target.shipped) + previous.shipped;
+        line.productId = target.id;
+      }
+      target.name = next.name; target.spec = next.spec; target.unit = next.unit;
+      target.produced = n(target.produced) + (next.produced - previous.produced);
+      target.shipped = n(target.shipped) + (next.shipped - previous.shipped);
+      const transferred = next.produced > 0;
+      Object.assign(line, {
+        name: next.name, spec: next.spec, unit: next.unit, quantity: next.quantity,
+        planned: transferred ? 0 : next.planned,
+        orderProduced: 0,
+        shipped: next.shipped,
+      });
+      const due = $('#editLineDue20')?.value ?? $('#editLineDue19')?.value ?? '';
+      if (due !== undefined) line.dueDate = due || '';
+      hide('#lineEditDialog');
+      save();
+      const stockNow = n(stock(target));
+      if (transferred) toast(`생산완료 ${q(next.produced)}${next.unit}를 공장 재고로 이관했습니다. 재고 ${q(previous.stock)} → ${q(stockNow)}${next.unit}`);
+      else toast('제품 수량을 변경했습니다.');
+    };
+  }
+  [1500, 5000, 11000, 14000].forEach(delay => setTimeout(install, delay));
+})();
