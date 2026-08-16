@@ -27,3 +27,8 @@ const flexibleQuantityScript=document.createElement('script');
 flexibleQuantityScript.async=false;
 flexibleQuantityScript.src='enhance-v28.js?rev=2';
 document.body.append(flexibleQuantityScript);
+
+const productionPlanScript=document.createElement('script');
+productionPlanScript.async=false;
+productionPlanScript.src='enhance-v29.js?rev=1';
+document.body.append(productionPlanScript);
