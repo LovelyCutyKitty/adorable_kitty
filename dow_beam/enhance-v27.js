@@ -23,3 +23,13 @@ function deleteLine27(ref){
 }
 document.addEventListener('click',e=>{const d=e.target.closest('[data-order-delete],[data-line-delete]')?.dataset||{};if(d.orderDelete)deleteOrder27(d.orderDelete);if(d.lineDelete)deleteLine27(d.lineDelete);});
 render();
+
+/* 발주 묶음과 개별 제품 작업의 시각적 구분 */
+const scopeStyle27=document.createElement('style');
+scopeStyle27.textContent=`.scope27{display:flex;align-items:center;gap:7px;margin:11px 0 8px;font-size:.78rem;font-weight:850;letter-spacing:.02em}.scope27:before{content:'';width:4px;height:16px;border-radius:4px}.scope27-order{color:#235342}.scope27-order:before{background:#235342}.scope27-line{color:#60766d;border-top:1px dashed #cbdcd3;padding-top:13px;margin-top:15px}.scope27-line:before{background:#8aa69a}.period>.order-edit,.period>.delete-action27{margin-top:0!important}.line-card .delete-action27{margin-top:8px!important}`;
+document.head.append(scopeStyle27);
+const orderHtmlScope27=orderHtml;
+orderHtml=(o,dash=false)=>orderHtmlScope27(o,dash).replace('</summary>','</summary><div class="scope27 scope27-order">전체 발주 정보</div>');
+const lineCardScope27=lineCard;
+lineCard=(o,l)=>lineCardScope27(o,l).replace('<h3>','<div class="scope27 scope27-line">제품별 작업</div><h3>');
+render();
