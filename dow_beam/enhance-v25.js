@@ -38,17 +38,8 @@ flexibleChangeScript.async=false;
 flexibleChangeScript.src='enhance-v30.js?rev=1';
 document.body.append(flexibleChangeScript);
 
-const dueCalendarScript=document.createElement('script');
-dueCalendarScript.async=false;
-dueCalendarScript.src='enhance-v31.js?rev=1';
-document.body.append(dueCalendarScript);
-
-const calendarFilterScript=document.createElement('script');
-calendarFilterScript.async=false;
-calendarFilterScript.src='enhance-v32.js?rev=1';
-document.body.append(calendarFilterScript);
 
 const directDueCalendarScript=document.createElement('script');
 directDueCalendarScript.async=false;
-directDueCalendarScript.src='enhance-v33.js?rev=1';
+directDueCalendarScript.src='enhance-v33.js?rev=2';
 document.body.append(directDueCalendarScript);
