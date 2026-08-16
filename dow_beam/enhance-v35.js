@@ -1,0 +1,8 @@
+/* 발주 메시지 → 엑셀 표준 제품 매칭 */
+const spec35=s=>String(s||'').replace(/\*/g,' x ').replace(/\s*[x×]\s*/gi,' x ').replace(/\s+/g,' ').trim().toLowerCase();
+const category35=n=>/^s\s*1/i.test(n)?'S1 레진빔':/^s\s*2/i.test(n)?'S2 프레스빔':/^s\s*3/i.test(n)?'S3 레드빔':'';
+const parse35=parse;
+parse=raw=>{const got=parse35(raw);got.lines=got.lines.map(l=>{const cat=category35(l.name), hit=MASTER34.find(m=>(!cat||m.category===cat)&&spec35(m.spec)===spec35(l.spec));if(!hit)return {...l,matched:false};return {...l,name:hit.category,spec:hit.spec,category:hit.category,kind:hit.kind,unit:hit.unit,matched:true,masterKey:[hit.category,hit.kind,norm34(hit.spec)].join('|')};});return got;};
+drawLines=()=>{$('#parsedLines').innerHTML=parsed.map((l,i)=>`<div class="edit-line"><input value="${esc(l.category||'표준 제품 미확인')}" readonly><input value="${esc(l.kind||l.name)}" readonly><input data-f="spec" data-i="${i}" value="${esc(l.spec)}"><input data-f="quantity" data-i="${i}" type="number" value="${l.quantity}"><button class="remove" data-remove="${i}" type="button">×</button></div>`).join('');};
+const read35=readMessage;readMessage=()=>{read35();const matched=parsed.filter(x=>x.matched).length;$('#parseNotice').textContent=parsed.length?`${parsed.length}개 품목을 읽었습니다. 표준 제품 ${matched}개 매칭 · 미확인 항목은 규격을 수정해 저장하세요.`:'수량이 있는 품목을 읽지 못했습니다.';drawLines();};$('#parseButton').onclick=readMessage;
+const save35=saveOrder;saveOrder=e=>{parsed.forEach(l=>{if(l.masterKey){const p=data.products.find(x=>x.masterKey===l.masterKey);if(p){l.productId=p.id;l.name=p.name;l.spec=p.spec;l.unit=p.unit;}}});return save35(e);};$('#orderForm').onsubmit=saveOrder;
