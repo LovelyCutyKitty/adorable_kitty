@@ -83,3 +83,8 @@ const classificationUiScript=document.createElement('script');
 classificationUiScript.async=false;
 classificationUiScript.src='enhance-v25.js?rev=4';
 document.body.append(classificationUiScript);
+
+const orderCorrectionScript=document.createElement('script');
+orderCorrectionScript.async=false;
+orderCorrectionScript.src='enhance-v27.js?rev=1';
+document.body.append(orderCorrectionScript);
