@@ -37,3 +37,8 @@ const flexibleChangeScript=document.createElement('script');
 flexibleChangeScript.async=false;
 flexibleChangeScript.src='enhance-v30.js?rev=1';
 document.body.append(flexibleChangeScript);
+
+const dueCalendarScript=document.createElement('script');
+dueCalendarScript.async=false;
+dueCalendarScript.src='enhance-v31.js?rev=1';
+document.body.append(dueCalendarScript);
