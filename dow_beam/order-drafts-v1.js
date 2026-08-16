@@ -32,7 +32,7 @@
     const ensure = () => current || start(company);
     String(raw || '').split(/\n+/).map(x=>x.trim()).filter(Boolean).forEach((original) => {
       let line = original.replace(/^[-•]\s*/, '');
-      const header = line.match(/^(.+?)\s*발주요\b/i);
+      const header = line.match(/^(.+?)\s*발주요/i);
       if (header) {
         let head = header[1].replace(/[（(].*?[)）]/g,'').trim();
         const headerCode = codeOf(head, '');
@@ -50,14 +50,14 @@
         if (company && companyOnly !== company) parent = company;
         company = companyOnly; current = null; return;
       }
-      const recipient = line.match(/^(.+?)\s*:\s*\d+(?:\.\d+)?\s*(?:개|kg|세트|장)\b/i);
+      const recipient = line.match(/^(.+?)\s*:\s*\d+(?:\.\d+)?\s*(?:개|kg|세트|장)/i);
       if (recipient && knownCompanies.has(recipient[1].trim())) {
         if (company && recipient[1].trim() !== company) parent = company;
         company = recipient[1].trim(); current = null;
         line = line.slice(recipient[0].indexOf(':'));
       }
       code = codeOf(line, code);
-      const quantity = line.match(/(?:=|:|(?<!\d)-)\s*(\d+(?:\.\d+)?)\s*(개|kg|세트|장)\b/i);
+      const quantity = line.match(/(?:=|:|(?<!\d)-|\s)\s*(\d+(?:\.\d+)?)\s*(개|kg|세트|장)/i);
       if (!quantity || /도합|합계|노즐|박스/.test(line)) {
         if (code && /FLAT|조각빔|가이드빔|쫄대빔/i.test(line)) pendingSpec = line;
         notes.push(line); return;
