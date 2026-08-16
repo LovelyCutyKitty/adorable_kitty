@@ -19,3 +19,6 @@ master=()=>catalogHtml25()+classificationNeeded25();
 document.body.insertAdjacentHTML('beforeend','<dialog id="productOrderDialog25" class="dialog"><div><div class="dialog-head"><h2 id="productOrderTitle25">제품 발주 정보</h2><button class="close" type="button" data-close>×</button></div><div id="productOrderBody25"></div></div></dialog>');
 document.addEventListener('click',e=>{const b=e.target.closest('[data-product-orders],[data-delete-product]');if(!b)return;if(b.dataset.productOrders)openProductOrders25(b.dataset.productOrders);if(b.dataset.deleteProduct)deleteProduct25(b.dataset.deleteProduct);});
 render();
+
+/* 현재 배포본에서도 발주 정정 기능을 불러온다. */
+if(!document.querySelector('script[data-order-correction]')){const s=document.createElement('script');s.dataset.orderCorrection='1';s.async=false;s.src='enhance-v27.js?rev=2';document.body.append(s);}
