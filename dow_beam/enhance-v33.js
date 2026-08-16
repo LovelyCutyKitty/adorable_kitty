@@ -60,3 +60,5 @@ document.addEventListener('click',e=>{
  const filter=e.target.closest('#dashboardView .quick-filters button');if(filter)setTimeout(drawCalendar33,0);
 });
 const render33=render;render=()=>{render33();setTimeout(drawCalendar33,0)};setTimeout(drawCalendar33,0);
+const master34Script=document.createElement('script');master34Script.async=false;master34Script.src='enhance-v34.js?rev=1';document.body.append(master34Script);
+const master34Runtime=document.createElement('script');master34Runtime.async=false;master34Runtime.src='enhance-v34-runtime.js?rev=1';document.body.append(master34Runtime);
