@@ -1,8 +1,9 @@
 /* One calendar for order receipt dates and line due dates. */
 (() => {
   let selectedDate = '';
+  let orderMonth = null;
   const dateOf = (order, line) => line?.dueDate || order.dueDate || '';
-  const month = () => typeof calMonth33 !== 'undefined' && calMonth33 ? new Date(calMonth33 + 'T00:00:00') : new Date(today() + 'T00:00:00');
+  const month = () => orderMonth ? new Date(orderMonth + 'T00:00:00') : new Date(today() + 'T00:00:00');
   function rowsFor(date) {
     const receipts = data.orders.filter(order => order.orderDate === date);
     const dues = data.orders.flatMap(order => (order.lines || []).map(line => ({ order, line, date:dateOf(order,line) }))).filter(row => row.date === date);
@@ -61,7 +62,7 @@
   }
   document.addEventListener('click', event => {
     const date=event.target.closest('[data-ordercal-date]')?.dataset.ordercalDate; if(date){selectedDate=date;drawCalendar();return;}
-    const nav=event.target.closest('[data-ordercal-nav]'); if(nav){const base=month();base.setMonth(base.getMonth()+n(nav.dataset.ordercalNav));calMonth33=`${base.getFullYear()}-${String(base.getMonth()+1).padStart(2,'0')}-01`;selectedDate='';drawCalendar();return;}
+    const nav=event.target.closest('[data-ordercal-nav]'); if(nav){const base=month();base.setMonth(base.getMonth()+n(nav.dataset.ordercalNav));orderMonth=`${base.getFullYear()}-${String(base.getMonth()+1).padStart(2,'0')}-01`;selectedDate='';drawCalendar();return;}
     const open=event.target.closest('[data-ordercal-open]')?.dataset.ordercalOpen; if(open) openOrders(open);
     const edit=event.target.closest('[data-ordercal-date-edit]')?.dataset.ordercalDateEdit; if(edit) openDateEditor(edit);
     const remove=event.target.closest('[data-ordercal-due-delete]')?.dataset.ordercalDueDelete; if(remove){const [orderId,lineId]=remove.split('|'),order=data.orders.find(x=>x.id===orderId),line=order?.lines.find(x=>x.id===lineId);if(!line)return;if(line.dueDate){if(confirm('이 제품의 개별 납기일을 삭제할까요?')){line.dueDate='';save();drawCalendar();drawDetail();}}else if(order?.dueDate&&confirm('이 발주의 기본 납기일입니다. 발주 전체의 기본 납기일을 삭제할까요?')){order.dueDate='';save();drawCalendar();drawDetail();}}
