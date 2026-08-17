@@ -48,7 +48,7 @@
   }
   function renderShipping() {
     const view = $('#productsView'); if (!view) return;
-    view.innerHTML = `<section id="productContent" hidden></section><div class="page-head"><div><h2>출고 관리</h2><p>발주처별로 출고 대기 제품과 출고 기록을 확인합니다.</p></div></div><div class="subtabs"><button class="subtab ${mode === 'pending' ? 'active' : ''}" data-shipping-mode="pending">출고 대기</button><button class="subtab ${mode === 'history' ? 'active' : ''}" data-shipping-mode="history">출고 기록</button></div>${mode === 'history' ? `<div class="shipping-filter"><button type="button" data-shipping-range="week" class="${range === 'week' ? 'active' : ''}">이번 주</button><button type="button" data-shipping-range="month" class="${range === 'month' ? 'active' : ''}">이번 달</button><button type="button" data-shipping-range="all" class="${range === 'all' ? 'active' : ''}">전체</button><label>기간<input id="shippingFrom" type="date" value="${esc(from)}"> ~ <input id="shippingTo" type="date" value="${esc(to)}"></label></div>` : '<p class="edit-note">출고 가능 제품을 발주처별로 확인한 뒤 출고 처리하세요.</p>'}<section id="shippingContent" class="groups">${mode === 'pending' ? pendingHtml() : historyHtml()}</section>`;
+    view.innerHTML = `<input id="productSearch" hidden><section id="productContent" hidden></section><div class="page-head"><div><h2>출고 관리</h2><p>발주처별로 출고 대기 제품과 출고 기록을 확인합니다.</p></div></div><div class="subtabs"><button class="subtab ${mode === 'pending' ? 'active' : ''}" data-shipping-mode="pending">출고 대기</button><button class="subtab ${mode === 'history' ? 'active' : ''}" data-shipping-mode="history">출고 기록</button></div>${mode === 'history' ? `<div class="shipping-filter"><button type="button" data-shipping-range="week" class="${range === 'week' ? 'active' : ''}">이번 주</button><button type="button" data-shipping-range="month" class="${range === 'month' ? 'active' : ''}">이번 달</button><button type="button" data-shipping-range="all" class="${range === 'all' ? 'active' : ''}">전체</button><label>기간<input id="shippingFrom" type="date" value="${esc(from)}"> ~ <input id="shippingTo" type="date" value="${esc(to)}"></label></div>` : '<p class="edit-note">출고 가능 제품을 발주처별로 확인한 뒤 출고 처리하세요.</p>'}<section id="shippingContent" class="groups">${mode === 'pending' ? pendingHtml() : historyHtml()}</section>`;
     view.querySelectorAll('[data-shipping-mode]').forEach(button => button.onclick = () => { mode = button.dataset.shippingMode; renderShipping(); });
     view.querySelectorAll('[data-shipping-range]').forEach(button => button.onclick = () => { range = button.dataset.shippingRange; from = ''; to = ''; renderShipping(); });
     view.querySelector('#shippingFrom')?.addEventListener('change', event => { from = event.target.value; range = 'custom'; renderShipping(); });
@@ -80,6 +80,10 @@
     const tab = document.querySelector('[data-view="products"]'); if (tab) tab.textContent = '출고';
     data.shipments ||= [];
     const oldRender = render; render = () => { oldRender(); renderShipping(); }; render();
+    const view = $('#productsView');
+    new MutationObserver(() => {
+      if (!view.querySelector('#shippingContent')) setTimeout(renderShipping, 0);
+    }).observe(view, { childList: true });
     document.addEventListener('click', event => {
       const ship = event.target.closest('[data-shipping-line]'); if (ship) { event.preventDefault(); event.stopImmediatePropagation(); openShipment(ship.dataset.shippingLine); }
       const cancel = event.target.closest('[data-cancel-shipment]'); if (cancel) { event.preventDefault(); event.stopImmediatePropagation(); cancelShipment(cancel.dataset.cancelShipment); }
