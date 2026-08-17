@@ -26,6 +26,11 @@
   }
   function launch(mode) {
     hide('#orderEntryDialog');
+    if (typeof window.openUnifiedOrder === 'function') {
+      window.openUnifiedOrder(mode, pending || {});
+      pending = null;
+      return;
+    }
     launching = true;
     (sourceButton || document.querySelector('[data-new-order]'))?.click();
     setTimeout(() => { applyMode(mode, pending || {}); launching = false; pending = null; }, 120);
