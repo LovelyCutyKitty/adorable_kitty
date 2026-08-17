@@ -134,12 +134,6 @@
   }
   function setup() {
     if (uiReady) {
-      if (!render.__productionCalendar) {
-        const originalRender = render;
-        const wrappedRender = () => { originalRender(); setTimeout(drawProductionCalendar, 80); };
-        wrappedRender.__productionCalendar = true;
-        render = wrappedRender;
-      }
       drawProductionCalendar();
       return;
     }
@@ -156,16 +150,12 @@
       const complete = event.target.closest('[data-plan-complete]')?.dataset.planComplete;
       const remove = event.target.closest('[data-plan-delete]')?.dataset.planDelete;
       if (date) openDay(date);
-      if (nav) { const base = prodMonth ? new Date(prodMonth + 'T00:00:00') : new Date(today() + 'T00:00:00'); base.setMonth(base.getMonth() + n(nav.dataset.productionNav)); prodMonth = monthKey(base); if (typeof calMonth33 !== 'undefined') calMonth33 = prodMonth; if (typeof drawCalendar33 === 'function') drawCalendar33(); setTimeout(drawProductionCalendar, 0); }
-      if (event.target.closest('[data-calnav33]')) setTimeout(() => { if (typeof calMonth33 !== 'undefined' && calMonth33) prodMonth = calMonth33; drawProductionCalendar(); }, 0);
+      if (nav) { const base = prodMonth ? new Date(prodMonth + 'T00:00:00') : new Date(today() + 'T00:00:00'); base.setMonth(base.getMonth() + n(nav.dataset.productionNav)); prodMonth = monthKey(base); drawProductionCalendar(); }
       if (complete) openComplete(complete);
       if (remove) deletePlan(remove);
     });
-    const originalRender = render;
-    const wrappedRender = () => { originalRender(); setTimeout(drawProductionCalendar, 80); };
-    wrappedRender.__productionCalendar = true;
-    render = wrappedRender;
-    [80, 500, 1500].forEach(delay => setTimeout(drawProductionCalendar, delay));
+    document.addEventListener('dow:datachange', drawProductionCalendar);
+    drawProductionCalendar();
   }
-  [0, 5000, 12000].forEach(delay => setTimeout(setup, delay));
+  setup();
 })();
