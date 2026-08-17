@@ -1,9 +1,8 @@
 /* One calendar for order receipt dates and line due dates. */
 (() => {
   let selectedDate = '';
-  let orderMonth = null;
   const dateOf = (order, line) => line?.dueDate || order.dueDate || '';
-  const month = () => orderMonth ? new Date(orderMonth + 'T00:00:00') : new Date(today() + 'T00:00:00');
+  const month = () => typeof calMonth33 !== 'undefined' && calMonth33 ? new Date(calMonth33 + 'T00:00:00') : new Date(today() + 'T00:00:00');
   function rowsFor(date) {
     const receipts = data.orders.filter(order => order.orderDate === date);
     const dues = data.orders.flatMap(order => (order.lines || []).map(line => ({ order, line, date:dateOf(order,line) }))).filter(row => row.date === date);
@@ -25,7 +24,7 @@
   }
   function drawCalendar() {
     const box = $('#priorityList'); if (!box) return;
-    box.querySelectorAll('.order-calendar,.order-calendar-detail').forEach(node => node.remove());
+    box.querySelectorAll('.due-calendar33,.due-calendar33-detail,.order-calendar,.order-calendar-detail').forEach(node => node.remove());
     const base = month(), first = new Date(base.getFullYear(), base.getMonth(), 1), last = new Date(base.getFullYear(), base.getMonth()+1, 0);
     const entries = {};
     data.orders.forEach(order => {
@@ -57,17 +56,17 @@
       $('#orderCalendarExistingDueForm').onsubmit = event => { event.preventDefault(); const order=data.orders.find(item=>item.id===$('#orderCalendarDueOrder').value), line=order?.lines.find(item=>item.id===$('#orderCalendarDueLine').value); if(!line) return; line.dueDate=$('#orderCalendarDueInput').value; hide('#orderCalendarExistingDueDialog'); save(); drawCalendar(); drawDetail(); toast('제품 납기일을 저장했습니다.'); };
       $('#orderCalendarDueOrder').onchange = event => { const order=data.orders.find(item=>item.id===event.target.value); $('#orderCalendarDueLine').innerHTML=(order?.lines||[]).map(line=>`<option value="${line.id}">${esc(line.name)} · ${esc(line.spec)}</option>`).join(''); };
     }
-    document.addEventListener('dow:datachange', drawCalendar);
+    if (!render.__orderCalendar) { const old=render; const newer=()=>{old();setTimeout(drawCalendar,100)}; newer.__orderCalendar=true; render=newer; }
     drawCalendar();
   }
   document.addEventListener('click', event => {
     const date=event.target.closest('[data-ordercal-date]')?.dataset.ordercalDate; if(date){selectedDate=date;drawCalendar();return;}
-    const nav=event.target.closest('[data-ordercal-nav]'); if(nav){const base=month();base.setMonth(base.getMonth()+n(nav.dataset.ordercalNav));orderMonth=`${base.getFullYear()}-${String(base.getMonth()+1).padStart(2,'0')}-01`;selectedDate='';drawCalendar();return;}
+    const nav=event.target.closest('[data-ordercal-nav]'); if(nav){const base=month();base.setMonth(base.getMonth()+n(nav.dataset.ordercalNav));calMonth33=`${base.getFullYear()}-${String(base.getMonth()+1).padStart(2,'0')}-01`;selectedDate='';drawCalendar(); if(typeof drawProductionCalendar==='function') drawProductionCalendar();return;}
     const open=event.target.closest('[data-ordercal-open]')?.dataset.ordercalOpen; if(open) openOrders(open);
     const edit=event.target.closest('[data-ordercal-date-edit]')?.dataset.ordercalDateEdit; if(edit) openDateEditor(edit);
     const remove=event.target.closest('[data-ordercal-due-delete]')?.dataset.ordercalDueDelete; if(remove){const [orderId,lineId]=remove.split('|'),order=data.orders.find(x=>x.id===orderId),line=order?.lines.find(x=>x.id===lineId);if(!line)return;if(line.dueDate){if(confirm('이 제품의 개별 납기일을 삭제할까요?')){line.dueDate='';save();drawCalendar();drawDetail();}}else if(order?.dueDate&&confirm('이 발주의 기본 납기일입니다. 발주 전체의 기본 납기일을 삭제할까요?')){order.dueDate='';save();drawCalendar();drawDetail();}}
     const add=event.target.closest('[data-ordercal-new]')?.dataset.ordercalNew; if(add) window.openOrderEntry?.(add==='receipt'?{orderDate:selectedDate}:{dueDate:selectedDate});
     if(event.target.closest('[data-ordercal-existing-due]')){const orders=data.orders.filter(o=>(o.lines||[]).length);$('#orderCalendarDueOrder').innerHTML=orders.map(o=>`<option value="${o.id}">${esc(o.company)} · ${esc(o.orderDate)}</option>`).join('');$('#orderCalendarDueOrder').dispatchEvent(new Event('change'));$('#orderCalendarDueInput').value=selectedDate;show('#orderCalendarExistingDueDialog');}
   });
-  setup();
+  [12000,18000,24000].forEach(delay=>setTimeout(setup,delay));
 })();
