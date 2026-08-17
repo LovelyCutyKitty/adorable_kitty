@@ -129,4 +129,9 @@
     });
     hide('#orderDialog'); save(); toast(`${usable.length}개 발주를 저장했습니다.`);
   }, true);
+  window.openOrderEntry = (prefill = {}) => {
+    openOrder();
+    drafts = [newDraft('', '', prefill.dueDate || '', '', prefill.orderDate || today())];
+    render();
+  };
 })();
