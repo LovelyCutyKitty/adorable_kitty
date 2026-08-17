@@ -17,7 +17,7 @@
     return current;
   };
   const unitOf = (code, unit) => code === 'CB' ? '장' : unit || '개';
-  const newDraft = (company='', parent='', due='', dueText='', orderDate=today()) => ({ id: id(), company, parent, orderDate, due, dueText, memo: '', lines: [] });
+  const newDraft = (company='', parent='', due='', dueText='') => ({ id: id(), company, parent, due, dueText, memo: '', lines: [] });
   const newLine = (code='', spec='', quantity=0, unit='개', due='') => ({ id: id(), code, spec, quantity, unit, due });
   function inferSpec(before, code, fallback='') {
     let out = String(before || '').replace(/^\s*(S[123]|B[12]|W1|CB|MB)\s*[-:]?\s*/i,'').replace(/^\s*(?:제작\s*)?수량\s*[:=-]?\s*/i,'').replace(/->/g,' ').trim();
@@ -79,11 +79,8 @@
   }
   function render() {
     const el = panel();
-    if (!document.querySelector('#draftOrderLayoutFix')) {
-      document.head.insertAdjacentHTML('beforeend', '<style id="draftOrderLayoutFix">#orderDialog #draftOrders .two{display:grid!important}</style>');
-    }
     if (!drafts.length) drafts = [newDraft()];
-    el.innerHTML = `<style>#orderDialog #lineEditor,#orderDialog label:has(#companyInput),#orderDialog .two,#orderDialog label:has(#orderMemoInput),#orderDialog #mergeOptions{display:none!important}</style><p class="edit-note">카톡 결과를 발주 초안으로 확인한 뒤 저장합니다. 입력하지 않아도 제품 줄과 발주 한 건을 직접 추가할 수 있습니다.</p>${drafts.map((draft, di) => `<details class="stock-group" open><summary>발주 초안 ${di + 1} · ${esc(draft.company || '발주처 입력')} <span class="order-meta">${draft.lines.length}개 품목</span></summary><div class="draft-fields"><label>발주처<input data-draft="company" data-di="${di}" value="${esc(draft.company)}" placeholder="발주처"></label><div class="two"><label>발주 접수일<input data-draft="orderDate" data-di="${di}" type="date" value="${esc(draft.orderDate || today())}"></label><label>납기일<input data-draft="due" data-di="${di}" type="date" value="${esc(draft.due)}"></label></div>${draft.dueText ? `<p class="muted">원문 납기: ${esc(draft.dueText)} (날짜 확인 필요)</p>` : ''}${draft.parent ? `<p class="muted">상위 발주: ${esc(draft.parent)}</p>` : ''}<div class="line-head"><span>제품 코드</span><span>제품 규격</span><span>수량</span><span>제품별 납기</span></div><div>${draft.lines.map((line, li) => `<div class="edit-line"><input data-line="code" data-di="${di}" data-li="${li}" value="${esc(line.code)}"><input data-line="spec" data-di="${di}" data-li="${li}" value="${esc(line.spec)}"><input data-line="quantity" data-di="${di}" data-li="${li}" type="number" min="0" step="0.01" value="${n(line.quantity)}"><input data-line="due" data-di="${di}" data-li="${li}" type="date" value="${esc(line.due || draft.due)}"><button class="remove" data-drop-line="${di}|${li}" type="button">×</button></div>`).join('')}</div><button class="secondary full" data-add-line="${di}" type="button">+ 제품 한 줄 추가</button><button class="secondary full" data-drop-draft="${di}" type="button">발주 삭제</button></div></details>`).join('')}<button class="secondary full" id="addDraft" type="button">+ 발주 한 건 추가</button>`;
+    el.innerHTML = `<style>#draftOrders .stock-group>summary{position:relative;padding-right:76px}#draftOrders .draft-delete-x{display:inline-flex!important;position:absolute!important;right:32px;top:50%;transform:translateY(-50%);z-index:3;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid #efb7ad;border-radius:8px;background:#fff;color:#c54b3e;font:800 1.15rem/1 sans-serif}</style><p class="edit-note">카톡 결과를 발주 초안으로 확인한 뒤 저장합니다. 직접 제품 줄도 추가할 수 있습니다.</p>${drafts.map((draft, di) => `<details class="stock-group" open><summary>발주 초안 ${di + 1} · ${esc(draft.company || '발주처 입력')} <span class="order-meta">${draft.lines.length}개 품목</span><button class="draft-delete-x" type="button" aria-label="발주 초안 삭제" title="발주 초안 삭제" data-drop-draft="${di}">×</button></summary><div class="draft-fields"><label>발주처<input data-draft="company" data-di="${di}" value="${esc(draft.company)}" placeholder="발주처"></label><label>납기일<input data-draft="due" data-di="${di}" type="date" value="${esc(draft.due)}"></label>${draft.dueText ? `<p class="muted">원문 납기: ${esc(draft.dueText)} (날짜 확인 필요)</p>` : ''}${draft.parent ? `<p class="muted">상위 발주: ${esc(draft.parent)}</p>` : ''}<div class="line-head"><span>제품 코드</span><span>제품 규격</span><span>수량</span><span>제품별 납기</span></div><div>${draft.lines.map((line, li) => `<div class="edit-line"><input data-line="code" data-di="${di}" data-li="${li}" value="${esc(line.code)}"><input data-line="spec" data-di="${di}" data-li="${li}" value="${esc(line.spec)}"><input data-line="quantity" data-di="${di}" data-li="${li}" type="number" min="0" step="0.01" value="${n(line.quantity)}"><input data-line="due" data-di="${di}" data-li="${li}" type="date" value="${esc(line.due || draft.due)}"><button class="remove" data-drop-line="${di}|${li}" type="button">×</button></div>`).join('')}</div><button class="secondary full" data-add-line="${di}" type="button">+ 제품 한 줄 추가</button></div></details>`).join('')}<button class="secondary full" id="addDraft" type="button">+ 발주 한 건 추가</button>`;
     document.querySelector('#lineEditor').classList.add('hidden');
   }
   function readInputs() {
@@ -91,7 +88,7 @@
     document.querySelectorAll('[data-line]').forEach(input => { const line = drafts[n(input.dataset.di)].lines[n(input.dataset.li)]; line[input.dataset.line] = input.dataset.line === 'quantity' ? n(input.value) : input.value.trim(); });
   }
   document.addEventListener('click', (event) => {
-    if (event.target.closest('[data-new-order]')) { drafts = [newDraft()]; render(); }
+    if (event.target.closest('[data-new-order]')) setTimeout(() => { drafts = [newDraft()]; render(); }, 0);
     if (event.target.closest('#parseButton')) {
       event.preventDefault(); event.stopImmediatePropagation();
       drafts = parse(document.querySelector('#messageInput').value);
@@ -125,13 +122,8 @@
         const p = product(line.code.toUpperCase(), line.spec, unit);
         return { id: id(), code: line.code.toUpperCase(), name: line.code.toUpperCase(), category: '기타·미분류', spec: clean(line.spec), quantity: n(line.quantity), unit, dueDate: line.due || draft.due || '', planned: 0, orderProduced: 0, shipped: 0, productId: p.id, unmatched: true };
       });
-      data.orders.push({ id: id(), company: draft.company, orderDate: draft.orderDate || today(), dueDate: draft.due || '', memo: [draft.parent && `상위 발주: ${draft.parent}`, draft.memo].filter(Boolean).join(' / '), lines });
+      data.orders.push({ id: id(), company: draft.company, orderDate: $('#orderDateInput').value || today(), dueDate: draft.due || '', memo: [draft.parent && `상위 발주: ${draft.parent}`, draft.memo].filter(Boolean).join(' / '), lines });
     });
     hide('#orderDialog'); save(); toast(`${usable.length}개 발주를 저장했습니다.`);
   }, true);
-  window.openOrderEntry = (prefill = {}) => {
-    openOrder();
-    drafts = [newDraft('', '', prefill.dueDate || '', '', prefill.orderDate || today())];
-    render();
-  };
 })();
