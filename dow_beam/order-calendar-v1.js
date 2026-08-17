@@ -24,7 +24,7 @@
   }
   function drawCalendar() {
     const box = $('#priorityList'); if (!box) return;
-    box.querySelectorAll('.due-calendar33,.due-calendar33-detail,.order-calendar,.order-calendar-detail').forEach(node => node.remove());
+    box.querySelectorAll('.order-calendar,.order-calendar-detail,.due-calendar33:not(.production-calendar),.due-calendar33-detail').forEach(node => node.remove());
     const base = month(), first = new Date(base.getFullYear(), base.getMonth(), 1), last = new Date(base.getFullYear(), base.getMonth()+1, 0);
     const entries = {};
     data.orders.forEach(order => {
