@@ -71,6 +71,16 @@
     hide('#orderDialog');save();toast(`${valid.length}개 발주를 저장했습니다.`);
   }
   window.openUnifiedOrder=(mode='manual',dates={})=>{drafts=[emptyDraft(dates)];kakaoRaw='';render(mode);getForm().onsubmit=submit;show('#orderDialog');};
+  // This runs in the window capture phase, before the legacy form handlers.
+  // Older scripts still replace form.onsubmit after a delay; they must not be
+  // allowed to take over the unified entry form.
+  window.addEventListener('submit', event => {
+    const form = getForm();
+    if (event.target !== form || !form?.querySelector('#unifiedDraftOrders')) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    submit(event);
+  }, true);
   function chooseMode(){
     let dialog=document.querySelector('#unifiedOrderChoice');
     if(!dialog){
