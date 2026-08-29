@@ -31,16 +31,7 @@ async function loadQuestionData() {
   if (Array.isArray(window.MALDDA_QUESTIONS) && window.MALDDA_QUESTIONS.length) {
     return window.MALDDA_QUESTIONS;
   }
-  if (!window.MALDDA_DATA_GZIP_B64) return [];
-  if (typeof DecompressionStream === 'undefined') {
-    throw new Error('gzip decoding unsupported');
-  }
-  const binary = atob(window.MALDDA_DATA_GZIP_B64);
-  const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
-  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-  const text = await new Response(stream).text();
-  const parsed = JSON.parse(text);
-  return Array.isArray(parsed) ? parsed : [];
+  return [];
 }
 
 function sortRounds(rounds) {
@@ -134,9 +125,61 @@ function start(mode, list) {
   renderQuestion();
 }
 
+function compactFrequency(text, fallback) {
+  const source = String(text || fallback || '').trim();
+  if (!source) return '-';
+  return source
+    .split(/\r?\n/)
+    .map((x) => x.trim().replace(/:\s*/g, ' '))
+    .filter(Boolean)
+    .join(' · ');
+}
+
 function renderMeta(q) {
-  $('#frequencyText').textContent = q.frequencyText || `${q.frequency || 1}회`;
+  $('#frequencyText').textContent = compactFrequency(
+    q.frequencyText,
+    `${q.frequency || 1}회`
+  );
   $('#appearancesText').textContent = q.appearances || q.round;
+}
+
+function looksLikeFormula(line) {
+  const s = String(line || '').trim();
+  if (!s) return false;
+  if (/^[A-Za-zΑ-ωα-ωπΠρσφγδεθλμνξτχψΩ]+(?:_[A-Za-z0-9]+)?\s*=/.test(s)) return true;
+  if (/^[A-Za-z]+_[A-Za-z0-9]+\s*=/.test(s)) return true;
+  if (/\b(?:f_cr|f_ck|f_cn|C_u|T_max|d_\d+|t_\d+|U)\b/.test(s) && /[=+\-*/^()]/.test(s)) return true;
+  if (/^[A-Za-z0-9_πΠρσφγδεθλμνξτχψΩ.]+\s*=\s*.+[()/*^]/.test(s)) return true;
+  return false;
+}
+
+function toAsciiMath(line) {
+  return String(line || '')
+    .replace(/π/g, 'pi')
+    .replace(/√\s*\(([^)]+)\)/g, 'sqrt($1)')
+    .replace(/√\s*([A-Za-z0-9_]+)/g, 'sqrt($1)')
+    .replace(/≤/g, '<=')
+    .replace(/≥/g, '>=')
+    .replace(/×/g, '*')
+    .replace(/÷/g, '/');
+}
+
+function renderRichText(text) {
+  return String(text || '')
+    .split(/\r?\n/)
+    .map((line) => {
+      if (looksLikeFormula(line)) {
+        return `<span class="math-line">\`${escapeHTML(toAsciiMath(line))}\`</span>`;
+      }
+      return `<span>${escapeHTML(line)}</span>`;
+    })
+    .join('<br>');
+}
+
+function typesetMath(target) {
+  if (!window.MathJax?.typesetPromise) return;
+  const nodes = target ? [target] : undefined;
+  window.MathJax.typesetPromise(nodes).catch((err) => console.warn('MathJax', err));
 }
 
 function renderQuestion() {
@@ -148,13 +191,15 @@ function renderQuestion() {
   $('#meterFill').style.width = `${((state.index + 1) / state.quiz.length) * 100}%`;
 
   renderMeta(q);
-  $('#questionText').textContent = q.question;
+  $('#questionText').innerHTML = renderRichText(q.question);
+  typesetMath($('#questionText'));
+
   $('#answerInput').value = state.answers[state.index] || '';
   $('#answerInput').disabled = false;
 
   $('#submitButton').classList.remove('hidden');
   $('#nextButton').classList.add('hidden');
-  $('#resultBox').className = 'result hidden';
+  $('#resultBox').className = 'result hidden rich-text';
   $('#afterAnswerActions').classList.add('hidden');
 
   if (roundMode) {
@@ -309,12 +354,17 @@ function submit() {
     }
   }
 
-  const text = result.correct
-    ? `정답입니다. (${result.count}/${result.total})`
-    : `오답입니다. (${result.count}/${result.total} 맞음)\n\n빠진 항목:\n${result.missed.map((x) => `- ${x}`).join('\n')}\n\n[정답]\n${q.answer}`;
-
-  $('#resultBox').textContent = text;
-  $('#resultBox').className = `result ${result.correct ? 'ok' : 'no'}`;
+  const resultBox = $('#resultBox');
+  if (result.correct) {
+    resultBox.innerHTML = `정답입니다. (${result.count}/${result.total})`;
+  } else {
+    const missed = result.missed.map((x) => `- ${x}`).join('\n');
+    resultBox.innerHTML = renderRichText(
+      `오답입니다. (${result.count}/${result.total} 맞음)\n\n빠진 항목:\n${missed}\n\n[정답]\n${q.answer}`
+    );
+  }
+  resultBox.className = `result rich-text ${result.correct ? 'ok' : 'no'}`;
+  typesetMath(resultBox);
 }
 
 function next() {
@@ -354,22 +404,21 @@ function finish() {
             ${state.results[i].count}/${state.results[i].total}
           </span>
         </summary>
-        <p><b>빈도수</b>
-${escapeHTML(q.frequencyText || `${q.frequency || 1}회`)}
-
-<b>출제년도·회차</b>
-${escapeHTML(q.appearances || q.round)}
-
-<b>문제</b>
-${escapeHTML(q.question)}
-
-<b>내 답</b>
-${escapeHTML(state.answers[i] || '(미입력)')}
-
-<b>정답</b>
-${escapeHTML(q.answer)}</p>
+        <div class="round-result-body rich-text">
+          <b>빈도수</b><br>
+          ${escapeHTML(compactFrequency(q.frequencyText, `${q.frequency || 1}회`))}<br><br>
+          <b>출제년도·회차</b><br>
+          ${escapeHTML(q.appearances || q.round)}<br><br>
+          <b>문제</b><br>
+          ${renderRichText(q.question)}<br><br>
+          <b>내 답</b><br>
+          ${escapeHTML(state.answers[i] || '(미입력)')}<br><br>
+          <b>정답</b><br>
+          ${renderRichText(q.answer)}
+        </div>
       </details>
     `).join('');
+    typesetMath($('#roundResults'));
   }
 
   updateStats();
