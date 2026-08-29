@@ -1,0 +1,9 @@
+{
+  "name": "건설재료시험기사 실기 말따먹기",
+  "short_name": "건재기 말따먹기",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f3f6fa",
+  "theme_color": "#16375b",
+  "lang": "ko"
+}
