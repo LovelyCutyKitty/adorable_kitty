@@ -1,4 +1,4 @@
-const CACHE="construction-material-cm-20260830-9";
+const CACHE="construction-material-cm-20260830-10";
 const ASSETS=[
   "./","./index.html","./styles.css","./ui-patch.css","../final-ux.css","./app.js","./latex-patch.js","../final-ux.js","./manifest.webmanifest",
   "./data/meta.js","./data/questions_01.js","./data/questions_02.js","./data/questions_03.js","./data/questions_04.js","./data/questions_05.js","./data/questions_06.js","./data/questions_07.js","./data/questions_08.js","./data/questions_09.js","./data/questions_10.js","./data/questions_11.js","./data/finalize.js",
