@@ -5,8 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0f2747" />
     <title>말따먹기</title>
-    <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="stylesheet" href="styles.css" />
+    <script>
+      (() => {
+        const version = 'civil-restore-20260829-1';
+        const url = new URL(window.location.href);
+        if (url.searchParams.get('v') !== version) {
+          url.searchParams.set('v', version);
+          window.location.replace(url.toString());
+        }
+      })();
+    </script>
+    <link rel="manifest" href="manifest.webmanifest?v=civil-restore-20260829-1" />
+    <link rel="stylesheet" href="styles.css?v=civil-restore-20260829-1" />
   </head>
   <body>
     <main class="app-shell">
@@ -40,7 +50,7 @@
 
       <section id="summaryView" class="view hidden"><div class="summary card"><p class="eyebrow" id="summaryMode"></p><h2 id="summaryTitle">풀이 완료</h2><strong id="summaryScore"></strong><p id="summaryText"></p><button id="summaryHomeButton" class="primary" type="button">처음으로</button></div><section id="roundResults" class="hidden"></section></section>
     </main>
-    <script src="data/questions.js"></script>
-    <script src="app.js"></script>
+    <script src="data/questions.js?v=civil-restore-20260829-1"></script>
+    <script src="app.js?v=civil-restore-20260829-1"></script>
   </body>
 </html>
