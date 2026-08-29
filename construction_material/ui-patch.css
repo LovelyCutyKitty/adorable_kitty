@@ -26,3 +26,37 @@ body{background:#f5f7fb}
 @media(max-width:380px){
   .mode-grid,.personal-grid{grid-template-columns:1fr}
 }
+
+/* v8: quiz action width + interactive history */
+#quizView .actions{display:grid;grid-template-columns:1fr;width:100%;gap:10px}
+#quizView .actions>button{width:100%;max-width:none}
+
+.history-clickable{
+  width:100%;appearance:none;-webkit-appearance:none;text-align:left;cursor:pointer;
+  font:inherit;color:inherit;background:#fff;
+}
+.history-clickable:hover{border-color:#b9cbe0;background:#f9fbfe}
+.history-detail-card{display:block}
+.history-back{margin-bottom:12px}
+.history-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.history-detail-head h3{margin:0 0 5px}
+.history-detail-head p{margin:0;color:#73849a;font-size:.84rem}
+.history-detail-head>strong{white-space:nowrap}
+.history-note{margin:14px 0;padding:12px 14px;border-radius:12px;background:#f5f7fb;color:#64758a;font-size:.86rem;line-height:1.45}
+.history-detail-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}
+.history-detail-actions>button{width:100%;max-width:none}
+.history-question-list{display:grid;gap:10px}
+.history-question{border:1px solid #dce6f1;border-radius:14px;background:#fff;overflow:hidden}
+.history-question summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 15px;cursor:pointer;font-weight:700;list-style:none}
+.history-question summary::-webkit-details-marker{display:none}
+.history-question summary em{font-style:normal;font-size:.76rem;font-weight:800;color:#60758e;white-space:nowrap}
+.history-question summary em.wrong-status{color:#b13b3b}
+.history-question summary em.correct-status{color:#25724a}
+.history-question-body{padding:0 15px 15px;border-top:1px solid #edf1f6}
+.history-question-body p{white-space:pre-wrap;line-height:1.62}
+.history-question-body pre{margin:8px 0 0;white-space:pre-wrap;word-break:break-word;font:inherit;line-height:1.62}
+
+@media(max-width:520px){
+  .history-detail-head{gap:10px}
+  .history-detail-actions{grid-template-columns:1fr}
+}
