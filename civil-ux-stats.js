@@ -1,5 +1,6 @@
 (() => {
   const UX=window.CivilUX;if(!UX)return;
+  show=function(name){['homeView','quizView','summaryView','panelView'].forEach(id=>UX.q('#'+id)?.classList.toggle('hidden',id!==name));};
   UX.localDay=(iso)=>{const d=new Date(iso);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
   UX.dateTime=(iso)=>{const d=new Date(iso);return `${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;};
   UX.sessionSummary=()=>{const ss=store.get('uxSessions',[]),total=ss.reduce((a,s)=>a+Number(s.total||0),0),correct=ss.reduce((a,s)=>a+Number(s.correct||0),0),avg=total?Math.round(correct/total*100):0,best=ss.length?Math.max(...ss.map(s=>Number(s.rate||0))):0,days=new Set();ss.forEach(s=>days.add(UX.localDay(s.date)));Object.values(store.get('log',{})).forEach(v=>{if(v?.date)days.add(UX.localDay(v.date));});return{ss,avg,best,days:days.size};};
