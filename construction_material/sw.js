@@ -1,8 +1,7 @@
 const CACHE="construction-material-cm-20260830-5";
 const ASSETS=[
   "./","./index.html","./styles.css","./ui-patch.css","./app.js","./latex-patch.js","./manifest.webmanifest",
-  "./data/meta.js","./data/questions_01.js","./data/questions_02.js","./data/questions_03.js","./data/questions_04.js","./data/questions_05.js","./data/questions_06.js","./data/questions_07.js","./data/questions_08.js","./data/questions_09.js","./data/questions_10.js","./data/questions_11.js","./data/finalize.js","./data/update_20260830.js",
-  "./assets/sqrt-t.webp","./assets/e-logp.webp",
+  "./data/meta.js","./data/questions_01.js","./data/questions_02.js","./data/questions_03.js","./data/questions_04.js","./data/questions_05.js","./data/questions_06.js","./data/questions_07.js","./data/questions_08.js","./data/questions_09.js","./data/questions_10.js","./data/questions_11.js","./data/finalize.js",
   "./code_01.js","./code_02.js","./code_03.js","./code_04.js","./code_05.js"
 ];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
