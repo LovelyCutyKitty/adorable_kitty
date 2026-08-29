@@ -7,7 +7,7 @@
   <title>토목기사 실기 말따먹기</title>
   <script>
     (() => {
-      const version = 'civil-ux-20260830-5';
+      const version = 'civil-ux-20260830-6';
       const url = new URL(window.location.href);
       if (url.searchParams.get('v') !== version) {
         url.searchParams.set('v', version);
@@ -15,9 +15,9 @@
       }
     })();
   </script>
-  <link rel="manifest" href="manifest.webmanifest?v=civil-ux-20260830-5" />
-  <link rel="stylesheet" href="styles-civil-v2.css?v=civil-ux-20260830-5" />
-  <link rel="stylesheet" href="civil-ui-patch.css?v=civil-ux-20260830-5" />
+  <link rel="manifest" href="manifest.webmanifest?v=civil-ux-20260830-6" />
+  <link rel="stylesheet" href="styles-civil-v2.css?v=civil-ux-20260830-6" />
+  <link rel="stylesheet" href="civil-ui-patch.css?v=civil-ux-20260830-6" />
 </head>
 <body>
 <main class="app-shell">
@@ -141,8 +141,20 @@
   <button id="saveSetButton" class="primary wide" type="button">학습세트 저장</button>
 </div></div>
 
-<script src="data/questions.js?v=civil-ux-20260830-5"></script>
-<script src="app-civil-v2.js?v=civil-ux-20260830-5"></script>
-<script src="civil-ui-patch.js?v=civil-ux-20260830-5"></script>
+<script src="data/questions.js?v=civil-ux-20260830-6"></script>
+<script src="app-civil-v2.js?v=civil-ux-20260830-6"></script>
+<script src="civil-ui-patch.js?v=civil-ux-20260830-6"></script>
+<script>
+  (() => {
+    const b = document.getElementById('resetButton');
+    if (!b) return;
+    b.onclick = () => {
+      if (confirm('이 기기의 오답·빈출 진도·즐겨찾기·학습세트·시험이력·통계를 모두 초기화할까요?')) {
+        ['log','memorized','frequentDone','frequentDoneByThreshold','solvedCount','favorites','studySets','attempts','sessions','uxMigration20260830','wrongPoolV5','wrongPoolV5Migrated'].forEach((x) => store.remove(x));
+        updateStats(); hidePickers(); alert('학습기록을 초기화했습니다.');
+      }
+    };
+  })();
+</script>
 </body>
 </html>
