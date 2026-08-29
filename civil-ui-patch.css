@@ -1,0 +1,36 @@
+/* 즉시 보이는 선택창 */
+.picker-card:not(.hidden){
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:min(700px,calc(100% - 32px));
+  max-height:min(82vh,720px);
+  overflow:auto;
+  margin:0;
+  z-index:40;
+  box-shadow:0 0 0 100vmax rgba(23,40,62,.38),0 20px 70px rgba(16,35,61,.22);
+}
+.picker-card:not(.hidden) .picker-head{
+  position:sticky;
+  top:-18px;
+  z-index:2;
+  margin:-18px -18px 14px;
+  padding:18px 18px 12px;
+  background:#fff;
+  border-radius:16px 16px 0 0;
+  border-bottom:1px solid #edf1f5;
+}
+.auto-set-row{
+  margin-top:2px;
+  padding:14px 10px;
+  border:1px solid #f0d9ad;
+  background:#fffaf0;
+  border-radius:13px;
+}
+.auto-set-row + .set-row{margin-top:4px}
+.row-actions button:disabled{opacity:.45;cursor:not-allowed}
+.compact-empty{padding:18px 8px 6px}
+@media(max-width:520px){
+  .picker-card:not(.hidden){width:calc(100% - 20px);max-height:86vh}
+}
