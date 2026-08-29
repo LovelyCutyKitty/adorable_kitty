@@ -7,7 +7,7 @@
   <title>토목기사 실기 말따먹기</title>
   <script>
     (() => {
-      const version = 'civil-ux-20260830-7';
+      const version = 'civil-ux-20260830-8';
       const url = new URL(window.location.href);
       if (url.searchParams.get('v') !== version) {
         url.searchParams.set('v', version);
@@ -15,9 +15,10 @@
       }
     })();
   </script>
-  <link rel="manifest" href="manifest.webmanifest?v=civil-ux-20260830-7" />
-  <link rel="stylesheet" href="styles-civil-v2.css?v=civil-ux-20260830-7" />
-  <link rel="stylesheet" href="civil-ui-patch.css?v=civil-ux-20260830-7" />
+  <link rel="manifest" href="manifest.webmanifest?v=civil-ux-20260830-8" />
+  <link rel="stylesheet" href="styles-civil-v2.css?v=civil-ux-20260830-8" />
+  <link rel="stylesheet" href="civil-ui-patch.css?v=civil-ux-20260830-8" />
+  <link rel="stylesheet" href="final-ux.css?v=civil-ux-20260830-8" />
 </head>
 <body>
 <main class="app-shell">
@@ -28,7 +29,7 @@
 
   <section id="homeView" class="view">
     <div class="intro card">
-      <p>내 계획에 맞게 문제 수와 범위를 정하고, 기록을 쌓으며 반복 학습하세요.</p>
+      <p>기출을 내 계획에 맞게 반복하고, 오답·빈출·취약문제를 압축해 복습하세요.</p>
       <div id="dataStatus" class="muted">문제 데이터를 불러오는 중...</div>
     </div>
 
@@ -93,7 +94,7 @@
       <div><span>오답</span><strong id="wrongCount">0</strong></div>
       <div><span>즐겨찾기</span><strong id="favoriteCount">0</strong></div>
       <div><span>누적 풀이</span><strong id="solvedCount">0문제</strong></div>
-      <div><span>전체 항목</span><strong id="uniqueCount">0</strong></div>
+      <div><span>전체 문제</span><strong id="uniqueCount">0</strong></div>
     </section>
   </section>
 
@@ -141,9 +142,10 @@
   <button id="saveSetButton" class="primary wide" type="button">학습세트 저장</button>
 </div></div>
 
-<script src="data/questions.js?v=civil-ux-20260830-7"></script>
-<script src="app-civil-v2.js?v=civil-ux-20260830-7"></script>
-<script src="civil-ui-patch.js?v=civil-ux-20260830-7"></script>
+<script src="data/questions.js?v=civil-ux-20260830-8"></script>
+<script src="app-civil-v2.js?v=civil-ux-20260830-8"></script>
+<script src="civil-ui-patch.js?v=civil-ux-20260830-8"></script>
+<script src="final-ux.js?v=civil-ux-20260830-8"></script>
 <script>
   (() => {
     const b = document.getElementById('resetButton');
