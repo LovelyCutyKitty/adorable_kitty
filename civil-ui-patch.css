@@ -31,6 +31,151 @@
 .auto-set-row + .set-row{margin-top:4px}
 .row-actions button:disabled{opacity:.45;cursor:not-allowed}
 .compact-empty{padding:18px 8px 6px}
+
+/* 시험 직후 오답 해설 뷰어 */
+.wrong-review-card{
+  width:min(940px,100%);
+  max-height:92vh;
+  overflow:auto;
+}
+.review-head{
+  position:sticky;
+  top:-18px;
+  z-index:5;
+  margin:-18px -18px 14px;
+  padding:18px 18px 12px;
+  background:#fff;
+  border-bottom:1px solid #edf1f5;
+}
+.wrong-review-layout{
+  display:grid;
+  grid-template-columns:minmax(230px,32%) minmax(0,1fr);
+  gap:14px;
+  align-items:start;
+}
+.wrong-review-list{
+  max-height:560px;
+  overflow:auto;
+  border:1px solid #e1e8f0;
+  border-radius:14px;
+  background:#f8fafc;
+}
+.wrong-review-item{
+  width:100%;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px;
+  border:0;
+  border-bottom:1px solid #e8edf3;
+  background:transparent;
+  color:#20344b;
+  text-align:left;
+}
+.wrong-review-item:last-child{border-bottom:0}
+.wrong-review-item span{
+  min-width:0;
+  font-size:.84rem;
+  line-height:1.45;
+}
+.wrong-review-item small{
+  flex:0 0 auto;
+  color:#718095;
+  font-size:.7rem;
+  white-space:nowrap;
+}
+.wrong-review-item.selected{
+  background:#eaf3fc;
+  box-shadow:inset 3px 0 0 #2f6fa7;
+}
+.wrong-review-detail{
+  min-width:0;
+  border:1px solid #e1e8f0;
+  border-radius:14px;
+  padding:16px;
+  background:#fff;
+}
+.review-position{
+  margin-bottom:10px;
+  color:#526b85;
+  font-size:.78rem;
+  font-weight:800;
+}
+.review-section{
+  padding:13px 14px;
+  margin-top:10px;
+  border:1px solid #e5ebf2;
+  border-radius:12px;
+  background:#fff;
+}
+.review-section:first-of-type{margin-top:0}
+.review-section p{
+  margin:5px 0 0;
+  white-space:pre-wrap;
+  line-height:1.65;
+}
+.review-question{background:#fbfcfe}
+.review-section.missed{
+  border-color:#f0c7c7;
+  background:#fff8f8;
+}
+.review-section.correct-answer{
+  border-color:#c4d9ec;
+  background:#f6fbff;
+}
+.review-status{
+  margin-top:11px;
+  color:#5d7187;
+  font-size:.8rem;
+  font-weight:700;
+}
+.review-actions{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:12px;
+}
+.review-actions button{
+  min-height:42px;
+  border:1px solid #ccd9e6;
+  border-radius:11px;
+  background:#fff;
+  color:#294b70;
+  font-weight:700;
+}
+.review-nav{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+.review-nav button{flex:1}
+.review-nav button:disabled{opacity:.42;cursor:not-allowed}
+
+@media(max-width:700px){
+  .wrong-review-layout{grid-template-columns:1fr}
+  .wrong-review-list{
+    display:flex;
+    gap:6px;
+    max-height:none;
+    overflow-x:auto;
+    padding:6px;
+    border:0;
+    background:transparent;
+  }
+  .wrong-review-item{
+    flex:0 0 210px;
+    border:1px solid #e1e8f0;
+    border-radius:11px;
+    background:#f8fafc;
+  }
+  .wrong-review-item.selected{box-shadow:inset 0 -3px 0 #2f6fa7}
+}
 @media(max-width:520px){
   .picker-card:not(.hidden){width:calc(100% - 20px);max-height:86vh}
+  .wrong-review-card{padding:14px;max-height:94vh}
+  .review-head{top:-14px;margin:-14px -14px 12px;padding:14px 14px 10px}
+  .wrong-review-detail{padding:12px}
+  .review-actions{grid-template-columns:1fr}
+  .wrong-review-item{flex-basis:190px}
 }
