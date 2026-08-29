@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0f2747" />
   <title>건설재료시험기사 말따먹기</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="stylesheet" href="styles.css?v=20260829-2" />
+  <link rel="stylesheet" href="styles.css?v=20260829-2337" />
   <script>
     window.MathJax = {
       loader: { load: ['input/asciimath', 'output/chtml'] },
@@ -96,8 +96,8 @@
       <div class="question-heading"><h2>문제</h2><button id="favoriteButton" class="favorite-button" type="button" aria-label="즐겨찾기">☆</button></div>
       <div id="questionText" class="rich-text"></div>
     </article>
-    <label class="answer-label" for="answerInput">답 입력</label>
-    <textarea id="answerInput" rows="7" placeholder="줄바꿈이나 쉼표로 항목을 나누어 입력하세요."></textarea>
+    <label class="answer-label" for="answerInput" style="display:block;margin:16px 0 7px;font-weight:700">답 입력</label>
+    <textarea id="answerInput" class="quiz-answer" rows="7" style="display:block;width:100%;min-height:150px;box-sizing:border-box;border:1px solid #ccd8e5;border-radius:14px;padding:14px;resize:vertical;line-height:1.55;background:#fff;color:#162235" placeholder="줄바꿈이나 쉼표로 항목을 나누어 입력하세요."></textarea>
     <div class="actions"><button id="submitButton" class="primary" type="button">제출</button><button id="nextButton" class="secondary hidden" type="button">다음 문제</button></div>
     <div id="resultBox" class="result hidden rich-text"></div>
     <div id="afterAnswerActions" class="after-actions hidden"><button id="correctButton" type="button">정답으로 처리</button><button id="memorizedButton" type="button">확실히 암기</button></div>
@@ -126,6 +126,6 @@
 
 <script src="data/materials_data_01.js"></script><script src="data/materials_data_02.js"></script><script src="data/materials_data_03.js"></script><script src="data/materials_data_04.js"></script><script src="data/materials_data_05.js"></script><script src="data/materials_data_06.js"></script>
 <script>
-(async function(){try{const encoded=window.MALDDA_DATA_GZIP_B64||'';if(!encoded)throw new Error('compressed data missing');if(typeof DecompressionStream==='undefined')throw new Error('gzip unsupported');const binary=atob(encoded);const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));const text=await new Response(stream).text();const parsed=JSON.parse(text);window.MALDDA_QUESTIONS=Array.isArray(parsed)?parsed:(parsed.questions||[]);if(!window.MALDDA_QUESTIONS.length)throw new Error('question array empty');const app=document.createElement('script');app.src='app.js?v=20260829-study-update';document.body.appendChild(app)}catch(err){console.error('question data load failed',err);const status=document.getElementById('dataStatus');if(status)status.textContent='문제 데이터를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.'}})();
+(async function(){try{const encoded=window.MALDDA_DATA_GZIP_B64||'';if(!encoded)throw new Error('compressed data missing');if(typeof DecompressionStream==='undefined')throw new Error('gzip unsupported');const binary=atob(encoded);const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));const text=await new Response(stream).text();const parsed=JSON.parse(text);window.MALDDA_QUESTIONS=Array.isArray(parsed)?parsed:(parsed.questions||[]);if(!window.MALDDA_QUESTIONS.length)throw new Error('question array empty');const app=document.createElement('script');app.src='app.js?v=20260829-study-update-2';document.body.appendChild(app)}catch(err){console.error('question data load failed',err);const status=document.getElementById('dataStatus');if(status)status.textContent='문제 데이터를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.'}})();
 </script>
 </body></html>
