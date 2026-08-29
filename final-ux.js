@@ -218,14 +218,12 @@
 
   function installInitialHistory() {
     const route = detectRoute();
-    const existing = history.state || {};
 
-    if (existing.__malddaUx && existing.__malddaHomeLive) {
-      history.replaceState({ ...existing, malddaDepth: 0, malddaRoute: route }, '');
-    } else {
-      history.replaceState(guardHomeState(route), '');
-      history.pushState(liveHomeState(route), '');
-    }
+    // Android/Chrome PWA 재실행 시 history.state는 복원되지만 그 이전 엔트리가
+    // 사라질 수 있다. 따라서 매 로드마다 현재 엔트리를 가드로 바꾸고
+    // 실제 화면 엔트리를 새로 하나 추가해 첫 뒤로가기를 항상 잡는다.
+    history.replaceState(guardHomeState(route), '');
+    history.pushState(liveHomeState(route), '');
     lastRouteKey = routeKey(route);
   }
 
