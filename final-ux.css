@@ -1,0 +1,35 @@
+/* Final shared UX polish for Civil + Construction Material apps */
+#roundPicker .round-mode-label{
+  display:block;
+  margin-top:16px;
+  margin-bottom:8px;
+}
+#roundPicker .round-mode-button{
+  position:relative;
+  transition:border-color .16s ease, background .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+#roundPicker .round-mode-button.round-choice-selected{
+  border-color:#9bbfe2;
+  background:#f2f8fe;
+  box-shadow:0 0 0 2px rgba(47,111,167,.08);
+  transform:translateY(-1px);
+}
+#roundPicker .round-mode-button.round-choice-selected strong{
+  color:#16375b;
+}
+#roundStartButton{
+  width:100%;
+  max-width:none;
+  min-height:50px;
+  margin-top:14px;
+}
+#roundStartButton:disabled{
+  opacity:.46;
+  cursor:not-allowed;
+  box-shadow:none;
+  transform:none;
+}
+
+@media(max-width:520px){
+  #roundStartButton{min-height:48px;margin-top:12px}
+}
