@@ -1,0 +1,26 @@
+/* Civil-app-like home layout + centered random choices */
+.app-shell{width:min(760px,calc(100% - 32px));margin:0 auto;padding:20px 0 48px}
+.top-header{margin:0 0 22px;padding:0 2px}
+.intro{margin:0 0 12px;padding:18px}
+.section-title{margin:20px 2px 9px}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.personal-grid{grid-template-columns:1fr 1fr}
+.mode-card{min-height:108px;padding:16px;border-radius:16px;box-shadow:none}
+.mode-card strong{font-size:1rem;margin-bottom:0}
+.mode-card span{font-size:.8rem;margin-top:7px;line-height:1.45}
+.personal-grid .mode-card{min-height:94px}
+.home-stats{margin-top:14px}
+
+#randomPicker .random-options{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:16px auto 14px}
+#randomPicker .random-options button{min-width:72px}
+#randomPicker .picker-note{text-align:center;margin:0 0 18px}
+
+@media(max-width:520px){
+  .app-shell{width:min(760px,calc(100% - 24px));padding-top:18px}
+  .mode-grid,.personal-grid{grid-template-columns:1fr 1fr}
+  .mode-card{min-height:108px}
+  .personal-grid .mode-card{min-height:94px}
+}
+@media(max-width:380px){
+  .mode-grid,.personal-grid{grid-template-columns:1fr}
+}
