@@ -152,6 +152,71 @@
 .review-nav button{flex:1}
 .review-nav button:disabled{opacity:.42;cursor:not-allowed}
 
+/* v7: 건재기와 동일한 시험 이력 카드 UI */
+#panelContent>.panel-card:has(.history-clickable){
+  display:grid;
+  gap:9px;
+  margin-bottom:12px;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
+.history-row.history-clickable{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  margin:0;
+  padding:14px;
+  border:1px solid #dfe6ee;
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 3px 12px rgba(20,48,80,.035);
+  appearance:none;
+  -webkit-appearance:none;
+  text-align:left;
+  color:#162235;
+  font:inherit;
+  cursor:pointer;
+  transition:.15s ease;
+}
+.history-row.history-clickable:last-child{border-bottom:1px solid #dfe6ee}
+.history-row.history-clickable:hover{
+  border-color:#b9cbe0;
+  background:#f9fbfe;
+  transform:translateY(-1px);
+  box-shadow:0 6px 18px rgba(20,48,80,.065);
+}
+.history-row .row-title{color:#16375b;font-weight:850}
+.history-row .row-sub{margin-top:4px;color:#6c7a8c;font-size:.77rem}
+.history-row .row-actions{display:flex;align-items:center;justify-content:flex-end}
+.history-row .row-actions strong{color:#16375b;white-space:nowrap}
+#panelContent>.panel-card:has(.history-clickable)+.muted{margin:10px 2px 0;color:#6c7a8c}
+
+.history-detail-card{display:block;padding:20px}
+.history-back{margin-bottom:12px}
+.history-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.history-detail-head h3{margin:0 0 5px;color:#16375b}
+.history-detail-head p{margin:0;color:#73849a;font-size:.84rem}
+.history-detail-head>strong{color:#16375b;white-space:nowrap}
+.history-note{margin:14px 0;padding:12px 14px;border-radius:12px;background:#f5f7fb;color:#64758a;font-size:.86rem;line-height:1.45}
+.history-detail-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}
+.history-detail-actions>button{width:100%;max-width:none}
+.history-question-list{display:grid;gap:10px}
+.history-question{border:1px solid #dce6f1;border-radius:14px;background:#fff;overflow:hidden}
+.history-question summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 15px;cursor:pointer;font-weight:700;list-style:none}
+.history-question summary::-webkit-details-marker{display:none}
+.history-question summary span{min-width:0;line-height:1.45}
+.history-question summary em{font-style:normal;font-size:.76rem;font-weight:800;color:#60758e;white-space:nowrap}
+.history-question summary em.wrong-status{color:#b13b3b}
+.history-question summary em.correct-status{color:#25724a}
+.history-question-body{padding:0 15px 15px;border-top:1px solid #edf1f6}
+.history-question-body p{white-space:pre-wrap;line-height:1.62}
+.history-question-body pre{margin:8px 0 0;white-space:pre-wrap;word-break:break-word;font:inherit;line-height:1.62}
+
 @media(max-width:700px){
   .wrong-review-layout{grid-template-columns:1fr}
   .wrong-review-list{
@@ -178,4 +243,7 @@
   .wrong-review-detail{padding:12px}
   .review-actions{grid-template-columns:1fr}
   .wrong-review-item{flex-basis:190px}
+  .history-row.history-clickable{grid-template-columns:minmax(0,1fr) auto;padding:13px 14px}
+  .history-detail-head{gap:10px}
+  .history-detail-actions{grid-template-columns:1fr}
 }
