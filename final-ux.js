@@ -1,5 +1,7 @@
 (() => {
   const isMaterial = location.pathname.includes('/construction_material/');
+  document.body.classList.toggle('construction-material-app', isMaterial);
+
   const copy = {
     intro: '기출을 내 계획에 맞게 반복하고, 오답·빈출·취약문제를 압축해 복습하세요.',
     status: isMaterial ? '2012-1 ~ 2026-2 · 179문제' : '2014-1 ~ 2026-2 · 443문제'
@@ -13,6 +15,8 @@
   let revertingBack = false;
   let lastRouteKey = '';
   let lastPanelType = '';
+  let exitArmedUntil = 0;
+  let exitToastTimer = 0;
 
   const el = (id) => document.getElementById(id);
   const isVisible = (node) => !!node && !node.classList.contains('hidden');
@@ -190,9 +194,38 @@
     restoring = false;
   }
 
+  function liveHomeState(route = { kind: 'home' }) {
+    return {
+      ...(history.state || {}),
+      __malddaUx: true,
+      __malddaHomeExitGuard: false,
+      __malddaHomeLive: true,
+      malddaDepth: 0,
+      malddaRoute: route
+    };
+  }
+
+  function guardHomeState(route = { kind: 'home' }) {
+    return {
+      ...(history.state || {}),
+      __malddaUx: true,
+      __malddaHomeExitGuard: true,
+      __malddaHomeLive: false,
+      malddaDepth: 0,
+      malddaRoute: route
+    };
+  }
+
   function installInitialHistory() {
     const route = detectRoute();
-    history.replaceState({ ...(history.state || {}), __malddaUx: true, malddaDepth: 0, malddaRoute: route }, '');
+    const existing = history.state || {};
+
+    if (existing.__malddaUx && existing.__malddaHomeLive) {
+      history.replaceState({ ...existing, malddaDepth: 0, malddaRoute: route }, '');
+    } else {
+      history.replaceState(guardHomeState(route), '');
+      history.pushState(liveHomeState(route), '');
+    }
     lastRouteKey = routeKey(route);
   }
 
@@ -202,6 +235,8 @@
     const key = routeKey(route);
     if (key === lastRouteKey) return;
 
+    if (route.kind !== 'home') exitArmedUntil = 0;
+
     const current = history.state?.__malddaUx ? history.state.malddaRoute : null;
     if (current?.kind === 'modal' && routeKey(current.base) === key) {
       history.back();
@@ -209,7 +244,14 @@
     }
 
     const depth = Number(history.state?.malddaDepth || 0) + 1;
-    history.pushState({ ...(history.state || {}), __malddaUx: true, malddaDepth: depth, malddaRoute: route }, '');
+    history.pushState({
+      ...(history.state || {}),
+      __malddaUx: true,
+      __malddaHomeExitGuard: false,
+      __malddaHomeLive: false,
+      malddaDepth: depth,
+      malddaRoute: route
+    }, '');
     lastRouteKey = key;
   }
 
@@ -217,6 +259,26 @@
     const depth = Number(history.state?.malddaDepth || 0);
     if (depth > 0) history.go(-depth);
     else restoreRoute({ kind: 'home' });
+  }
+
+  function ensureExitToast() {
+    let toast = el('malddaExitToast');
+    if (toast) return toast;
+    toast = document.createElement('div');
+    toast.id = 'malddaExitToast';
+    toast.className = 'maldda-exit-toast';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    toast.textContent = '한 번 더 뒤로가면 종료됩니다.';
+    document.body.appendChild(toast);
+    return toast;
+  }
+
+  function showExitToast() {
+    const toast = ensureExitToast();
+    clearTimeout(exitToastTimer);
+    toast.classList.add('show');
+    exitToastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
   }
 
   document.addEventListener('click', (event) => {
@@ -294,8 +356,25 @@
       return;
     }
 
-    const targetRoute = event.state?.__malddaUx ? event.state.malddaRoute : null;
     const currentRoute = detectRoute();
+
+    if (event.state?.__malddaHomeExitGuard && currentRoute.kind === 'home') {
+      const now = Date.now();
+      if (now < exitArmedUntil) {
+        exitArmedUntil = 0;
+        history.back();
+        return;
+      }
+
+      exitArmedUntil = now + 2200;
+      showExitToast();
+      restoreRoute({ kind: 'home' });
+      history.pushState(liveHomeState({ kind: 'home' }), '');
+      lastRouteKey = routeKey({ kind: 'home' });
+      return;
+    }
+
+    const targetRoute = event.state?.__malddaUx ? event.state.malddaRoute : null;
 
     if (currentRoute.kind === 'quiz' && targetRoute && targetRoute.kind !== 'quiz') {
       if (!confirm('풀이를 종료하고 이전 화면으로 돌아갈까요?')) {
