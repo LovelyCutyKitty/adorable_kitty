@@ -198,19 +198,7 @@
     return {
       ...(history.state || {}),
       __malddaUx: true,
-      __malddaHomeExitGuard: false,
       __malddaHomeLive: true,
-      malddaDepth: 0,
-      malddaRoute: route
-    };
-  }
-
-  function guardHomeState(route = { kind: 'home' }) {
-    return {
-      ...(history.state || {}),
-      __malddaUx: true,
-      __malddaHomeExitGuard: true,
-      __malddaHomeLive: false,
       malddaDepth: 0,
       malddaRoute: route
     };
@@ -218,12 +206,17 @@
 
   function installInitialHistory() {
     const route = detectRoute();
+    const navType = performance.getEntriesByType?.('navigation')?.[0]?.type || '';
+    const alreadyLiveReload = navType === 'reload' && history.state?.__malddaUx && history.state?.__malddaHomeLive;
 
-    // Android/Chrome PWA 재실행 시 history.state는 복원되지만 그 이전 엔트리가
-    // 사라질 수 있다. 따라서 매 로드마다 현재 엔트리를 가드로 바꾸고
-    // 실제 화면 엔트리를 새로 하나 추가해 첫 뒤로가기를 항상 잡는다.
-    history.replaceState(guardHomeState(route), '');
-    history.pushState(liveHomeState(route), '');
+    // Chrome/Android에는 첫 로드에서 replaceState() 뒤 pushState()를 쓰면
+    // 실제 히스토리 길이는 늘어도 시스템 Back이 활성화되지 않는 케이스가 있다.
+    // 초기 엔트리는 건드리지 않고 그 위에 한 칸만 push해서 Back을 확실히 잡는다.
+    if (alreadyLiveReload) {
+      history.replaceState({ ...history.state, malddaDepth: 0, malddaRoute: route }, '');
+    } else {
+      history.pushState(liveHomeState(route), '');
+    }
     lastRouteKey = routeKey(route);
   }
 
@@ -245,7 +238,6 @@
     history.pushState({
       ...(history.state || {}),
       __malddaUx: true,
-      __malddaHomeExitGuard: false,
       __malddaHomeLive: false,
       malddaDepth: depth,
       malddaRoute: route
@@ -356,7 +348,10 @@
 
     const currentRoute = detectRoute();
 
-    if (event.state?.__malddaHomeExitGuard && currentRoute.kind === 'home') {
+    // 홈에서의 Back은 event.state 내용과 무관하게 처리한다.
+    // 첫 Back은 방금 push한 동일 문서 엔트리에서 원래 홈 엔트리로 내려오는 것이므로
+    // 앱을 유지하고 토스트를 띄운다. 두 번째 Back에서만 실제 이전 엔트리로 나간다.
+    if (currentRoute.kind === 'home') {
       const now = Date.now();
       if (now < exitArmedUntil) {
         exitArmedUntil = 0;
@@ -366,7 +361,6 @@
 
       exitArmedUntil = now + 2200;
       showExitToast();
-      restoreRoute({ kind: 'home' });
       history.pushState(liveHomeState({ kind: 'home' }), '');
       lastRouteKey = routeKey({ kind: 'home' });
       return;
