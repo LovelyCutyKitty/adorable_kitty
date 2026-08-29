@@ -6,6 +6,18 @@ const store = {
 };
 const keyOf = (q) => q.groupId || `${q.round}||${q.question}`;
 
+async function loadQuestionData() {
+  if (Array.isArray(window.MALDDA_QUESTIONS) && window.MALDDA_QUESTIONS.length) return window.MALDDA_QUESTIONS;
+  if (!window.MALDDA_DATA_GZIP_B64) return [];
+  if (typeof DecompressionStream === 'undefined') throw new Error('This browser does not support gzip data decoding.');
+  const binary = atob(window.MALDDA_DATA_GZIP_B64);
+  const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+  const text = await new Response(stream).text();
+  const parsed = JSON.parse(text);
+  return Array.isArray(parsed) ? parsed : (parsed.questions || []);
+}
+
 function uniqueQuestions() {
   const byId = new Map();
   state.questions.forEach((q) => { if (!byId.has(keyOf(q))) byId.set(keyOf(q), q); });
@@ -19,13 +31,16 @@ function sortRounds(list) {
 }
 async function boot() {
   try {
-    state.questions = window.MALDDA_QUESTIONS || [];
+    state.questions = await loadQuestionData();
     if (!state.questions.length) throw new Error('No question data');
     const rounds = sortRounds(new Set(state.questions.map((q) => q.round)));
     $('#roundSelect').innerHTML = rounds.map((r) => `<option value="${r}">${r}</option>`).join('');
-    $('#dataStatus').textContent = `${rounds.at(-1)} ~ ${rounds[0]} · ${state.questions.length}개 대문항 · ${uniqueQuestions().length}개 고유 주제`;
+    $('#dataStatus').textContent = `${rounds.at(-1)} ~ ${rounds[0]} · ${state.questions.length}개 대문항 · ${uniqueQuestions().length}개 고유 문제군`;
     updateStats();
-  } catch { $('#dataStatus').textContent = '문제 데이터를 불러오지 못했습니다. 파일을 다시 확인하세요.'; }
+  } catch (err) {
+    console.error(err);
+    $('#dataStatus').textContent = '문제 데이터를 불러오지 못했습니다. 파일을 다시 확인하세요.';
+  }
 }
 function show(name) { ['homeView','quizView','summaryView'].forEach((id) => $(`#${id}`).classList.toggle('hidden', id !== name)); }
 function updateStats() {
@@ -38,8 +53,8 @@ function activeWrongs() {
   return uniqueQuestions().filter((q) => log[keyOf(q)]?.result === '오답' && !memorized.includes(keyOf(q)));
 }
 function frequentQuestions() {
-  return uniqueQuestions().filter((q) => q.frequency >= 2)
-    .sort((a,b) => b.frequency-a.frequency || Number(a.id)-Number(b.id));
+  return uniqueQuestions().filter((q) => Number(q.frequency || 1) >= 2)
+    .sort((a,b) => Number(b.frequency||1)-Number(a.frequency||1) || Number(a.id)-Number(b.id));
 }
 function shuffle(list) {
   const out=[...list];
