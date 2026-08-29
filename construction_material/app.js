@@ -1,6 +1,6 @@
 (async()=>{
   const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(new Error('load failed: '+src));document.head.appendChild(s)});
-  const version='cm-20260830-9';
+  const version='cm-20260830-10';
   for(const src of ['data/questions_09.js','data/questions_10.js','data/questions_11.js','code_01.js','code_02.js','code_03.js','code_04.js','code_05.js']) await load(`${src}?v=${version}`);
   const ungzip=async(b64)=>{
     const bin=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
