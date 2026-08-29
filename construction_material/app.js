@@ -1,6 +1,6 @@
 (async()=>{
   const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(new Error('load failed: '+src));document.head.appendChild(s)});
-  const version='cm-20260830-6';
+  const version='cm-20260830-7';
   for(const src of ['data/questions_09.js','data/questions_10.js','data/questions_11.js','code_01.js','code_02.js','code_03.js','code_04.js','code_05.js']) await load(`${src}?v=${version}`);
   const ungzip=async(b64)=>{
     const bin=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
@@ -8,11 +8,57 @@
     return await new Response(stream).text();
   };
   window.CM_LOADED_QUESTIONS=JSON.parse(await ungzip(window.CM_DATA_B64||''));
-  const softeningQuestion='아스팔트 연화점시험(환구법)에 대한 물음에 답하시오.\n가. 시료를 환(ring)에 넣고 몇 시간 안에 시험을 마쳐야 하는가?\n나. 시료가 강구와 함께 시료대에서 몇 mm 떨어진 밑판에 닿는 순간의 온도를 연화점으로 하는가?\n다. 시험온도는 매분 몇 °C의 비율로 온도가 상승하도록 하는가?';
+
+  // 새 엑셀 데이터에 기존 앱 스키마(round/order/id/groupId/representative)를 복원한다.
+  // id는 기존처럼 "회차-회차내번호"를 사용해 예전 오답/즐겨찾기 기록과 다시 연결한다.
+  const roundCounts={};
+  const groupIds=new Map();
+  const represented=new Set();
+  let groupSeq=0;
+  const oldTopics=[];
   for(const q of window.CM_LOADED_QUESTIONS){
-    if(q && q.topic==='아스팔트 연화점시험' && (q.source==='2024-3'||q.source==='2022-1')) q.question=softeningQuestion;
+    if(!String(q.source||'').startsWith('2026-')){
+      const t=q.topic||(q.topics&&q.topics[0])||'';
+      if(t&&!oldTopics.includes(t)) oldTopics.push(t);
+    }
   }
-  window.CM_DATA={...(window.CM_DATA||{}),...(window.CM_META||{}),questions:window.CM_LOADED_QUESTIONS};
+  for(const t of oldTopics) groupIds.set(t,`g${String(++groupSeq).padStart(3,'0')}`);
+
+  const idPairs=[];
+  for(const q of window.CM_LOADED_QUESTIONS){
+    const legacyId=q.id;
+    const round=q.round||q.source||'';
+    const order=(roundCounts[round]||0)+1;
+    roundCounts[round]=order;
+    const stableId=`${round}-${order}`;
+    const topic=q.topic||(q.topics&&q.topics[0])||stableId;
+    if(!groupIds.has(topic)) groupIds.set(topic,`g${String(++groupSeq).padStart(3,'0')}`);
+    const groupId=groupIds.get(topic);
+    q.source=q.source||round;
+    q.round=round;
+    q.order=order;
+    q.groupId=groupId;
+    q.representative=!represented.has(groupId);
+    represented.add(groupId);
+    q.legacyHashId=legacyId;
+    q.id=stableId;
+    if(legacyId&&legacyId!==stableId) idPairs.push([legacyId,stableId]);
+  }
+
+  // v6를 한 번 사용하며 새 해시 ID로 저장된 기록도 안정 ID로 옮긴다.
+  try{
+    const keys=[];
+    for(let i=0;i<localStorage.length;i++) keys.push(localStorage.key(i));
+    for(const key of keys){
+      const value=localStorage.getItem(key);
+      if(!value||!value.includes('cm-')) continue;
+      let next=value;
+      for(const [from,to] of idPairs) if(next.includes(from)) next=next.split(from).join(to);
+      if(next!==value) localStorage.setItem(key,next);
+    }
+  }catch(e){console.warn('study state migration skipped',e);}
+
+  window.CM_DATA={...(window.CM_META||{}),questions:window.CM_LOADED_QUESTIONS};
   const code=await ungzip(window.CM_APP_B64||'');
   (0,eval)(code);
   await load(`latex-patch.js?v=${version}`);
