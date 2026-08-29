@@ -30,6 +30,72 @@
   transform:none;
 }
 
+/* 건재기 홈 타이포그래피를 토목기사 홈과 동일한 기준으로 맞춘다. */
+body.construction-material-app{
+  font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;
+  color:#162235;
+}
+body.construction-material-app .eyebrow{
+  margin:0 0 4px;
+  color:#55708e;
+  font-size:.78rem;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:none;
+}
+body.construction-material-app .top-header .text-button{
+  color:#365b84;
+  font-weight:400;
+}
+body.construction-material-app #homeView .intro p{
+  margin:1em 0;
+  font-size:1rem;
+  font-weight:400;
+  line-height:normal;
+}
+body.construction-material-app .section-title{
+  margin:20px 2px 9px;
+  color:#50647d;
+  font-size:.82rem;
+  font-weight:800;
+}
+body.construction-material-app .mode-card strong{
+  font-size:1rem;
+  font-weight:700;
+  margin-bottom:0;
+}
+body.construction-material-app .mode-card span{
+  margin-top:7px;
+  font-size:.8rem;
+  line-height:1.45;
+}
+
+/* 홈에서 첫 뒤로가기에 보여주는 네이티브 앱 느낌의 안내 */
+.maldda-exit-toast{
+  position:fixed;
+  left:50%;
+  bottom:calc(22px + env(safe-area-inset-bottom,0px));
+  z-index:1000;
+  transform:translate(-50%,12px);
+  max-width:calc(100% - 36px);
+  padding:10px 16px;
+  border-radius:999px;
+  background:rgba(22,34,53,.92);
+  color:#fff;
+  font-size:.82rem;
+  font-weight:650;
+  white-space:nowrap;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .16s ease,transform .16s ease;
+  box-shadow:0 8px 28px rgba(10,25,45,.2);
+}
+.maldda-exit-toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
 @media(max-width:520px){
   #roundStartButton{min-height:48px;margin-top:12px}
+  .maldda-exit-toast{bottom:calc(18px + env(safe-area-inset-bottom,0px));font-size:.8rem}
 }
