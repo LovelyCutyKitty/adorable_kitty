@@ -9,6 +9,24 @@
   const processed = new WeakSet();
   const SUBSCRIPT_RE = /([A-Za-zΑ-Ωα-ω][A-Za-z0-9Α-Ωα-ω]*)_([A-Za-z0-9Α-Ωα-ω]+)/g;
 
+  function ensureMathJax() {
+    if (window.MathJax?.typesetPromise) return Promise.resolve();
+    if (window.__cmMathJaxPromise) return window.__cmMathJaxPromise;
+    window.MathJax = {
+      tex: { inlineMath: [['\\(','\\)']], processEscapes: true },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','code','annotation','annotation-xml'] }
+    };
+    window.__cmMathJaxPromise = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.async = true;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+    return window.__cmMathJaxPromise;
+  }
+
   function isTargetNode(node) {
     const parent = node.parentElement;
     if (!parent) return false;
@@ -42,8 +60,8 @@
     scheduled = false;
     const roots = ROOT_SELECTORS.map(sel => document.querySelector(sel)).filter(Boolean);
     roots.forEach(scan);
-    if (!window.MathJax?.typesetPromise) return;
     try {
+      await ensureMathJax();
       if (window.MathJax.startup?.promise) await window.MathJax.startup.promise;
       await window.MathJax.typesetPromise(roots);
     } catch (err) {
