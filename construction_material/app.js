@@ -7,15 +7,7 @@
     const stream=new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'));
     return await new Response(stream).text();
   };
-  const existing=JSON.parse(await ungzip(window.CM_DATA_B64||''));
-  window.CM_LOADED_QUESTIONS=existing;
-  await load(`data/update_20260830.js?v=${version}`);
-  if(window.CM_PATCH_META) {
-    window.CM_META={...(window.CM_META||{}),...window.CM_PATCH_META};
-  }
-  if(typeof window.CM_SYNC_QUESTIONS==='function') {
-    window.CM_LOADED_QUESTIONS=window.CM_SYNC_QUESTIONS(existing);
-  }
+  window.CM_LOADED_QUESTIONS=JSON.parse(await ungzip(window.CM_DATA_B64||''));
   window.CM_DATA={...(window.CM_DATA||{}),...(window.CM_META||{}),questions:window.CM_LOADED_QUESTIONS};
   const code=await ungzip(window.CM_APP_B64||'');
   (0,eval)(code);
