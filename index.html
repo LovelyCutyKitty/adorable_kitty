@@ -7,6 +7,16 @@
   <title>건설재료시험기사 말따먹기</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    window.MathJax = {
+      loader: { load: ['input/asciimath', 'output/chtml'] },
+      asciimath: { delimiters: [['`', '`']] },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
 </head>
 <body>
 <main class="app-shell">
@@ -62,7 +72,7 @@
     <div class="meter"><i id="meterFill"></i></div>
 
     <div class="meta-card">
-      <div>
+      <div class="frequency-meta">
         <span class="meta-title">빈도수</span>
         <strong id="frequencyText">-</strong>
       </div>
@@ -74,7 +84,7 @@
 
     <article class="question-card">
       <h2>문제</h2>
-      <p id="questionText"></p>
+      <div id="questionText" class="rich-text"></div>
     </article>
 
     <label class="answer-label" for="answerInput">답 입력</label>
@@ -85,7 +95,7 @@
       <button id="nextButton" class="secondary hidden" type="button">다음 문제</button>
     </div>
 
-    <div id="resultBox" class="result hidden"></div>
+    <div id="resultBox" class="result hidden rich-text"></div>
 
     <div id="afterAnswerActions" class="after-actions hidden">
       <button id="correctButton" type="button">정답으로 처리</button>
