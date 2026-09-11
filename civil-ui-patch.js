@@ -50,7 +50,7 @@
     const box = $('#resultBox');
     if (!box) return;
     box.textContent = result.correct
-      ? `정답입니다. (${result.count}/${result.total})`
+      ? `정답입니다. (${result.count}/${result.total})\n\n정답\n${q.answer}`
       : `오답입니다. (${result.count}/${result.total} 맞음)\n\n정답\n${q.answer}`;
   };
   $('#submitButton').onclick = submit;
